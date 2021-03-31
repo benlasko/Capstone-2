@@ -5,32 +5,32 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from EDA_plus import data_overview
-from EDA_plus import nan_replacer
-
 from wordcloud import WordCloud, STOPWORDS
+from nltk.corpus import stopwords 
+from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
-from nltk.corpus import stopwords 
-from nltk.tokenize import word_tokenize 
-from nltk.stem import WordNetLemmatizer
+import itertools
+import re
 
 from sklearn.preprocessing import StandardScaler
 
 from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.naive_bayes import GaussianNB
 import sklearn.linear_model as lm
-
+from sklearn.neural_network import MLPClassifier
+from sklearn.datasets import make_classification
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
 
 from sklearn.metrics import confusion_matrix
-from sklearn.metrics import f1_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
-
-import spacy
+from sklearn.metrics import f1_score
+from sklearn.model_selection import cross_val_score
 
 
 '''
@@ -38,18 +38,52 @@ EDA
 
 NLP
 
-Classifiers using prelabeled data.  Because tweets are short, countvectorizer is prob better.
+Classifiers using prelabeled data
 
 Unsupervised analysis
 
 '''
 
+def data_overview(df):
+    '''
+    Overview of dataframe to start EDA.
+
+    Parameter
+    ----------
+    df:  pd.DataFrame 
+        A Pandas DataFrame
+
+    Returns
+    ----------
+        First five rows (.head())
+        Shape (.shape)
+        All columns (.columns)
+        Readout of how many non-null values and the dtype for each column (.info())
+        Numerical column stats (.describe())
+        Sum of unique value counts of each column
+        Total of NaN/null values per column
+    '''
+
+    print("\u0332".join("HEAD "))
+    print(f'{df.head()} \n\n')
+    print("\u0332".join("SHAPE "))
+    print(f'{df.shape} \n\n')
+    print("\u0332".join("COLUMNS "))
+    print(f'{df.columns}\n\n')
+    print("\u0332".join("INFO "))
+    print(f'{df.info()}\n\n')
+    print("\u0332".join("UNIQUE VALUES "))
+    print(f'{df.nunique()} \n\n')
+    print("\u0332".join("NUMERICAL COLUMN STATS "))
+    print(f'{df.describe()}\n\n')
+    print('\u0332'.join("TOTAL NULL VALUES IN EACH COLUMN"))
+    print(f'{df.isnull().sum()} \n\n')
+    return
 
 
 
 all_data = pd.read_csv('data/Tweets.csv')
 # all_data = pd.read_csv('data/Tweets.csv', encoding='ISO-8859-1')
-
 
 
 # drop unwanted columns 
@@ -60,35 +94,28 @@ df = all_data.drop(columns=['tweet_id','airline_sentiment_confidence', 'negative
 # print(data_overview(df))
 
 
-# rename columns
-df.columns = ['sent', 'airline', 'name', 'rts', 'tweets', 'coords', 'time', 'location', 'timezone']
-# # rename these after finished for readability/usability
-# print(df.columns)
-
-
-# make sentiments numerical
-df['sent'] = df['sent'].map({'positive':1, 'negative':-1, 'neutral':0})
-
-
-
 # remove duplicate rows (there's over 100 duplicate rows)
 df.drop_duplicates(inplace=True)
 
 
-# shorten tweet times to minutes, make datetime object
+# rename columns
+df.columns = ['sent', 'airline', 'name', 'rts', 'tweet', 'coords', 'time', 'location', 'timezone']
+# print(df.columns)
+
+
+# shorten times to the minute and remove timezones, make datetime object
 df['time'] = df['time'].str.slice(0,16)
-df['time'] =  pd.to_datetime(df['time'])
+df['time'] = pd.to_datetime(df['time'])
 
 
-# # replace nans/nulls
-# 13641 nulls in coords.  replace with mode. there's only 832 unique coords
+# fill nans/nulls
+# 13641 nulls in coords.  replace with mode although there's only 832 unique coords
 # 4733 nulls in location col.  replace with mode.
 # 4820 nulls in timezone.  replace with mode.
 
 # replace nans in location column with the mode
 # for col in df['location', 'coords', 'timezone']:
 #     df[col] = df[col].fillna(df[col].mode()[0])
-
 
 df['location'] = df['location'].fillna(df['location'].mode()[0])
 df['coords'] = df['coords'].fillna(df['coords'].mode()[0])
@@ -97,25 +124,84 @@ df['timezone'] = df['timezone'].fillna(df['timezone'].mode()[0])
 
 
 
+# EDA plots
+
+# total sentiment counts plot
+# ax = sns.catplot(x="sent", kind="count", palette="colorblind", data=df, order=['negative', 'neutral', 'positive'])
+# ax.set(xlabel="Sentiment", ylabel = "Count", title='Total Sentiment Counts')
+# plt.show()
+# plt.savefig('Sentiment Counts')
+
+
+# sentiment counts by airline
+ax = df.groupby(['airline','sent'])['sent'].count().unstack(0).plot.bar(figsize=(10,10), edgecolor='k')
+ax.set_title('Sentiment Counts for each Airline', size=20)
+ax.set_xlabel('Sentiment')
+ax.set_ylabel('Counts')
+plt.show()
+
+
+
+
+# other plots:
+# neg/pos sentiment by day, neg/pos sentiment by day by airline
+# wordcloud of raw tweets (done below)
+# neg/pos sent by timezone
+# top 20 words and their counts
+
+
+
+# make sentiments numerical (after EDA plots)
+df['sent'] = df['sent'].map({'positive':1, 'negative':-1, 'neutral':0})
+
+
+
+
+
+
+
 # list of all tweets
-all_tweets_lst = [tweet for tweet in df['tweets']]
+tweets_lst = [tweet for tweet in df['tweet']]
 
 # single string of all tweet text
 corpus = ''
-for text in df.tweets:  
+for text in df.tweet:  
     corpus += ''.join(text)
 
 
 
 
 
-# create word cloud from string
+# word cloud function
 def word_clouder(text, width=800, height=800, background_color='black', min_font_size=12):
+    '''
+    Generates word cloud of text.
+
+    Parameter
+    ----------
+    text:  str 
+        A string of words to create the word cloud from.
+    width:  int 
+        Width in pixels of word cloud image.
+    height:  int 
+        Height in pixels of word cloud image.
+    background_color:  str
+        Color of background of word cloud image
+    min_font_size:  int
+        Minimum font size of 
+
+    Returns
+    ----------
+    Word cloud image.
+        
+    '''
     return WordCloud(width=800, height=800,
                      background_color='black',
                      min_font_size=12).generate(text)
 
-# all_words_wordcloud = word_clouder(corpus)
+
+# create word cloud of raw corpus
+# corpus_wordcloud = word_clouder(corpus)
 # plt.figure(figsize = (8, 8), facecolor = None)
 # plt.imshow(all_words_wordcloud)
 # plt.axis("off")
@@ -127,6 +213,15 @@ def word_clouder(text, width=800, height=800, background_color='black', min_font
 
 
 
+# word count dictionary, don't need it
+# def word_count_dict(text):
+#     d = {}
+#     for string in example_lst:
+#         if string in d.keys():
+#             d[string] += 1
+#     else:
+#         d[string] = 1
+#     return d
 
 
 
@@ -135,47 +230,25 @@ def word_clouder(text, width=800, height=800, background_color='black', min_font
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-'''
-clean text
-word frequency
-tf-idf, or not.
-'''
-
-
-
-# adding new stopwords
-stopWords = set(stopwords.words('english'))
+# stopwords = the nltk stopwords
+# add new stopwords:
+StopWords = set(stopwords.words('english'))
 
 add_stopwords = {'flight'}
-stopWords = stopWords.union(add_stopwords)
+StopWords = StopWords.union(add_stopwords)
 
 
 
 
 
 
-# text cleaning pipeline:
-
+# for each tweet/for entire corpus:
 
 def lower(text):
     return text.lower()
 
 def remove_punctuation(text):
-    punc = '!()-[]{};:\,<>./?@#$%^&*_~;'
+    punc = '!()-[]{};:\\,<>./?@#$%^&*_~;'
 
     for ch in text:
         if ch in punc:
@@ -186,16 +259,16 @@ def remove_newline(text):
     text.replace('\n', '')
     return text
 
+def remove_url(text):
+    return " ".join(re.sub("([^0-9A-Za-z \t])|(\w+:\/\/\S+)", "", text).split())
+
 def split_text_into_words(text):
     return text.split(' ')
 
 # stop_words = set(stopwords.words("english"))
 
 def remove_stopwords(word_lst):
-    return [word for word in word_lst if word not in stopWords]
-
-def remove_additional_stopwords(word_lst, additional_stop_words):
-    return [word for word in word_lst if word not in additional_stop_words]
+    return [word for word in word_lst if word not in StopWords]
 
 def lemmatizer(word_lst):
     lemmatizer = WordNetLemmatizer()
@@ -208,38 +281,82 @@ def create_cleaned_textline_from_words(words):
 def string_from_list(word_lst):
     return ''.join(word_lst)
 
-
 def text_cleaner(text, additional_stop_words=[]):
     text_lc = lower(text)
     text_np = remove_punctuation(text_lc)
     text_nnls = remove_newline(text_np)
-    words = split_text_into_words(text_nnls)
+    text_nurl = remove_url(text_nnls)
+    words = split_text_into_words(text_nurl)
     words_nsw = remove_stopwords(words)
-    # words_nasw = remove_additional_stopwords(words_nsw, additional_stop_words)
     lemmatized = lemmatizer(words_nsw)
     cleaned_text = string_from_list(lemmatized)
     return cleaned_text
 
 
-
-
 tester = text_cleaner(corpus[:2000])
 
 
-# after cleaning text, use countvectorizer to create term frequency matrix
-
-# initialize vectorizer, min_df=2 ignores terms appearing in less than 2 docs, use max_df to choose to ignore words that are too frequent.  min and max df can take absolute numbers (4,5) or proportion (.5)
-
-cv = CountVectorizer(stop_words='english', min_df=2, max_df=1000)
-tfm = cv.fit_transform(all_tweets_lst)
+# many numbers are flight numbers.  need to remove flight numbers but not minute descriptions( 45 mins).  remove all numbers with len>2 ?
 
 
+# Part Of Speech tagging
+def get_wordnet_pos(word):
+    '''Map POS tag to first character lemmatize() accepts'''
+    tag = nltk.pos_tag([word])[0][1][0].upper()
+    tag_dict = {"J": wordnet.ADJ,
+                "N": wordnet.NOUN,
+                "V": wordnet.VERB,
+                "R": wordnet.ADV}
+
+    return tag_dict.get(tag, wordnet.NOUN)
+
+# n-grams
+
+
+
+
+
+
+
+
+# term frequency matrix
+
+# count vectorizer.  min_df=2 ignores terms appearing in less than 2 docs, use max_df to choose to ignore words that are too frequent. min and max df can take abs numbers or proportion.
+cv = CountVectorizer(stop_words='english', min_df=0, max_df=1000)
+count_vec_tfm = cv.fit_transform(tweets_lst).toarray()
 feature_names = cv.get_feature_names()
-feature_frequencies = np.sum(tfm.toarray(), axis=0)
+feature_frequencies = np.sum(count_vec_tfm)
 
 
-# many numbers are flight numbers.  need to remove flight numbers but not minute descriptions( 45 mins). 
+#  Tfidf vectorizer
+tv = TfidfVectorizer()
+tfidf_tfm = tv.fit_transform(tweets_lst)
 
+
+
+
+
+
+
+
+
+# run text cleaner on each tweet
+# run vectorizer on each cleaned tweet
+
+def vec_it(text, vectorizer=cv):
+    vectorizer = vectorizer
+    words = text.split()
+
+    vecced_text = vectorizer.fit_transform(words)
+    return vecced_text
+
+
+
+# df['tweet'] = df['tweet'].apply(text_cleaner)
+# print(df['tweet'][400])
+
+# df['tweet'] = df['tweet'].apply(vec_it)
+# print(df['tweet'][400])
 
 # see which words are part of the vocab
 # print(cv.vocabulary_)
@@ -247,7 +364,7 @@ feature_frequencies = np.sum(tfm.toarray(), axis=0)
 # see numbr of docs and unique words of the tfm
 # print(cv.shape)
 
-# see which words have become stopwords after running cv
+# see which words have become stopwords for cv
 # print(cv.stop_words_)
 
 
@@ -255,36 +372,68 @@ feature_frequencies = np.sum(tfm.toarray(), axis=0)
 
 
 
-
-
-
 '''
-Supervised learning Classification models
+Supervised Classification
 
-Try naive bayes, svc, randomforest, neural network:  mlpregressor, logistic regression, LSTM, 
+Try naive bayes, svc, randomforest, logistic reg, neural network:  mlpregressor, logistic regression, LSTM, 
 '''
+
+# apply text cleaner
+df['tweet'] = df['tweet'].apply(text_cleaner)
+
 
 # train/test split
-X_train, y_train, X_test, y_test = df.tweets[:10150], df.sent[:10150], df.tweets[10150:], df.sent[10150:]
+X = df.tweet
+y = df.sent
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2, stratify=y)
 
-#test models, accuracy and f1 score
-model_types = [GaussianNB(), SVC(), DecisionTreeClassifier(), RandomForestClassifier(n_estimators = 275, max_features=5), lm.LogisticRegression(), lm.LinearRegression()]
+
+# apply count vec to train/test data
+X_train = cv.fit_transform(X_train).toarray()
+X_test = cv.fit_transform(X_test).toarray()
+# y_test = cv.fit_transform(y_test)
 
 
-def test_class_models(models=model_types):
-    score_list = []
-    for i in model_types:
-        
-        model = i
+# apply tfidf vec to train/test data
+# X_train = tv.fit_transform(X_train)
+# y_test = tv.fit_transform(y_test)
+
+
+#test models
+# , SVC(), DecisionTreeClassifier(), RandomForestClassifier(n_estimators = 275, max_features=3), lm.LogisticRegression(class_weight='balanced'), lm.LinearRegression()
+models = [GaussianNB()]
+
+
+def score_class_models(models=models):
+    acc_score_list = []
+    f1_score_list = []
+
+    for model in models:
+        print(model)    
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
 
-        score_list.append(model.score(X_test, y_test))
+        acc_score_list.append(model.score(X_test, y_test))
+        f1_score_list.append(f1_score(y_test, y_pred))
         
-    for model, score in zip(model_types, score_list):
-        print (f'{model}: {score}')
+    for model, score in zip(models, acc_score_list):
+        print (f'{model} accuracy: {score * 100} %')
+        
+    for model, score in zip(models, f1_score_list):
+        print(f'{model} f1: {score * 100} %')
 
     return
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -295,3 +444,21 @@ def test_class_models(models=model_types):
 # precision_score.append(precision_score(y_test, y_predict))
 # recall_score.append(recall_score(y_test, y_predict))
 # f1_scores = f1_score(y_true, y_pred, average=None)
+
+
+
+'''Cross Validation'''
+
+
+
+
+'''Unsupervised'''
+# term frequency matrix has thousands of features.  reduce features using pca?
+# k means clustering to find clusters, evaluate clusters, 
+
+
+kmeans = KMeans(n_clusters=3, n_jobs=-1)
+kmeans.fit(count_vec_tfm)
+
+
+# pca = PCA(n_components=2).fit(count_vec_tfm)
