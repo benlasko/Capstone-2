@@ -174,6 +174,19 @@ cleaned_corpus=text_cleaner(corpus)
 
 # tester = text_cleaner(corpus[:2000])
 
+
+
+
+
+# concords = cleaned_corpus.concordance('get', lines=10)
+# concords = text.concordance('cleaned_corpus')
+# concords.concordance('get')
+
+
+
+
+
+
 # create word cloud of cleaned corpus
 
 # cleaned_corpus_wordcloud = word_clouder(cleaned_corpus)
@@ -183,7 +196,6 @@ cleaned_corpus=text_cleaner(corpus)
 # plt.tight_layout(pad = 1)
 # plt.show()
 # plt.savefig('cleaned corpus word cloud')
-
 
 
 
@@ -220,13 +232,16 @@ def common_words_graph(text, num_words=15, title='most common words'):
     ax.set_title(title)
     plt.legend(edgecolor='inherit')
     plt.show()
-    return ipy
+    return
 
 
 
-# concords = cleaned_corpus.concordance('get', lines=10)
-# concords = text.concordance('cleaned_corpus')
-# concords.concordance('get')
+
+
+
+
+
+
 
 
 # total unique words
@@ -327,18 +342,6 @@ models = [MLPClassifier(hidden_layer_sizes=250, activation='relu', solver='adam'
 
 # score list of models, return accuracy and f1 score (weighted for unbalanced classes) for each model
 def score_class_models(models=models):
-    '''
-    Scores multiple classification models.
-
-    Parameter
-    ----------
-    models:  list
-        List of classification models to run.
-
-    Returns
-    ----------
-    Accuracy and F1 scores for each model.
-    '''
     acc_score_list = []
     f1_score_list = []
 
@@ -348,14 +351,16 @@ def score_class_models(models=models):
 
         acc_score_list.append(model.score(X_test, y_test))
         f1_score_list.append(f1_score(y_test, y_pred, average='weighted'))
-        # print(f'{model} \n standard_confusion_matrix(y_test, y_pred) \n')
+        # print(f'{model}: \n {confusion_matrix(y_test, y_pred)} \n')
         
-    for model, score in zip(models, acc_score_list):
+    for model, score, f1_score in zip(models, acc_score_list, f1_score_list):
         print(f'{model} accuracy: {round(score * 100, 2)} %')
-             
-    for model, score in zip(models, f1_score_list):
-        print(f'{model} f1: {round(score * 100, 2)} %')
-        
+        print(f'\n')
+        print(f'{model} f1: {round(f1_score * 100, 2)} %')     
+
+
+    # for model, score in zip(models, f1_score_list):
+    
     return
 
 
@@ -374,13 +379,29 @@ def score_class_models(models=models):
 # cross validate best model
 # stratified Kfold for unbalanced classes
 
-skf = StratifiedKFold(n_splits=10)
 
-# for train_index, test_index in skf.split(X, y):
-#     print("TRAIN:", train_index, "TEST:", test_index)
-#     X_train, X_test = X[train_index], X[test_index]
-#     y_train, y_test = y[train_index], y[test_index]
+def stratified_k_fold(model, n_folds=5):
+    
+    skf = StratifiedKFold(n_splits=n_folds)
+    scores = []
+    models = []
+    
+    for train_index, test_index in skf.split(X_train, y_train):
+        X_t = X_train[train_index]
+        X_v = X_train[test_index]
+        y_t = y_train[train_index]
+        y_v = y_train[test_index]
 
+        model.fit(X_t, y_t)
+        models.append(model)
+        scores.append(model.score(X_v, y_v))
+
+    scores = np.array(scores)
+    scores_mean = scores.mean()
+    best_model = models[np.argmax(scores)]
+    val_score = best_model.score(X_test, y_test)
+
+    return f'scores mean: {scores_mean} \n val score: {val_score}'
 
 
 
@@ -397,21 +418,35 @@ skf = StratifiedKFold(n_splits=10)
 
 
 # use tfidf vectorizer on cleaned corpus to get term frequency matrix
-tv = TfidfVectorizer()
-corpus_tfm = tv.fit_transform(df.tweet)
-# term frequency matrix is shape (14503, 13523)
+# tv = TfidfVectorizer()
+# corpus_tfm = tv.fit_transform(df.tweet)
+# # term frequency matrix is shape (14503, 13523)
 
-# use pca to regularize term frequency matrix
-pca = TruncatedSVD(100)
-truncated = pca.fit_transform(corpus_tfm)
-# truncated tfm shape is 14503, 100
+# # use pca to regularize term frequency matrix
+# pca = TruncatedSVD(100)
+# truncated = pca.fit_transform(corpus_tfm)
+# # truncated tfm shape is 14503, 100
 
 
-# find clusters with K Means Clustering
-kmeans = KMeans(n_clusters=3, n_jobs=-1)
-kmeans.fit(truncated)
+# # find clusters with K Means Clustering
+# kmeans = KMeans(n_clusters=3, n_jobs=-1)
+# kmeans.fit(truncated)
 # kmeans.cluster_centers.shape is 3,100
 
+
+
+# # # plot kmeans
+# label = kmeans.fit_predict(truncated)
+
+# # #filter rows
+# filtered_label1 = df[label == 1]
+# filtered_label2 = df[label == 2]
+# filtered_label3 = df[label == 3]
+
+# plt.scatter(filtered_label1[:,0] , filtered_label1[:,1] , color = 'blue')
+# plt.scatter(filtered_label2[:,0] , filtered_label2[:,1] , color = 'red')
+# plt.scatter(filtered_label3[:,0] , filtered_label3[:,1] , color = 'black')
+# plt.show()
 
 
 
