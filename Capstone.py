@@ -13,8 +13,10 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import itertools
 import re
 import collections
+from nltk.text import Text 
+import nltk.corpus 
 
-from sklearn.preprocessing import StandardScaler
+
 
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
@@ -29,14 +31,16 @@ from sklearn.decomposition import PCA
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.neural_network import MLPClassifier
 
-
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
 from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import KFold
 from sklearn.model_selection import StratifiedKFold
+
+from sklearn.decomposition import TruncatedSVD
+
+
 
 '''
 EDA
@@ -49,14 +53,6 @@ Unsupervised analysis
 
 '''
 
-
-'''
-MAKE THE BEFORE/AFTER VISUALIZATIONS (wordcloud, top word count graphs)
-MESS WITH MODEL PARAMETERS - SVC, MLP
-MESS WITH feature engineering STOPWORDS
-CROSS VALIDATION
-DO UNSUPERVISED kmeans clustering.
-'''
 
 '''Data Wrangle'''
 
@@ -83,6 +79,10 @@ for text in df.tweet:
 
 # list of words in all tweets
 list_words_raw_corpus = corpus.split()
+
+
+
+
 
 
 
@@ -170,10 +170,12 @@ def text_cleaner(text, additional_stop_words=[]):
     cleaned_text = string_from_list(lemmatized)
     return cleaned_text
 
+cleaned_corpus=text_cleaner(corpus)
+
 # tester = text_cleaner(corpus[:2000])
 
 # create word cloud of cleaned corpus
-# cleaned_corpus=text_cleaner(corpus)
+
 # cleaned_corpus_wordcloud = word_clouder(cleaned_corpus)
 # plt.figure(figsize = (8, 8), facecolor = None)
 # plt.imshow(cleaned_corpus_wordcloud)
@@ -218,28 +220,31 @@ def common_words_graph(text, num_words=15, title='most common words'):
     ax.set_title(title)
     plt.legend(edgecolor='inherit')
     plt.show()
-    return 
+    return ipy
 
+
+
+# concords = cleaned_corpus.concordance('get', lines=10)
+# concords = text.concordance('cleaned_corpus')
+# concords.concordance('get')
 
 
 # total unique words
-def num_unique_words(text):
-    txt = text.split()
-    return len(set(txt))
+# def num_unique_words(text):
+#     txt = text.split()
+#     return len(set(txt))
 
 # average repitition of words
-def avg_rep(text):
-    return round(len(text)/len(set(text)), 2)
+# def avg_rep(text):
+#     return round(len(text)/len(set(text)), 2)
 
 # total words, total unique words, average repitition, proportion of unique words
-def lexical_diversity(text):
-    txt = text.split()
-    print(f'Total words: {len(txt)}')
-    print(f'Total unique words: {len(set(txt))}')
-    print(f'Average repetition: {round(len(text)/len(set(text)), 2)}')
-    return f'The richness and diversity of these tweets...: {round(len(set(txt)) / len(txt), 2)}'
-
-
+# def lexical_diversity(text):
+#     txt = text.split()
+#     print(f'Total words: {len(txt)}')
+#     print(f'Total unique words: {len(set(txt))}')
+#     print(f'Average word repetition: {round(len(text)/len(set(text)), 2)}')
+#     return f'Proportion of unique words: {round(len(set(txt)) / len(txt), 2)}'
 
 
 
@@ -254,6 +259,21 @@ Supervised Learning.  Classification.
 
 Try naive bayes, svc, randomforest, logistic reg, neural network:  mlpregressor, LSTM, 
 '''
+def standard_confusion_matrix(y_true, y_pred, sklearn=True):
+    if sklearn:
+        [[tn, fp], [fn, tp]] = confusion_matrix(y_true, y_pred)
+    else:
+        tp, fp, fn, tn = 0, 0, 0, 0
+        for tup in zip(y_true, y_pred):
+            if tup == (1, 1):
+                tp += 1
+            elif tup == (0, 1):
+                fp += 1
+            elif tup == (1, 0):
+                fn += 1
+            else:
+                tn += 1
+    return np.array([[tp, fp], [fn, tn]])
 
 
 #  Tfidf vectorizer
@@ -299,11 +319,11 @@ X_test = cv.transform(X_test).toarray()
 # X_train = tv.fit_transform(X_train)
 # y_test = tv.fit_transform(y_test)
 
-#list classification models to test, try all with no tuning
+#list classification models to test, no tuning
 # models = [MultinomialNB(), SVC(), DecisionTreeClassifier(), RandomForestClassifier(), MLPClassifier()]
 
 # tuned model list
-models = [MLPClassifier(hidden_layer_sizes=500, alpha=.05,learning_rate='adaptive')]
+models = [MLPClassifier(hidden_layer_sizes=250, activation='relu', solver='adam', alpha=.05, batch_size=10, learning_rate='adaptive')]
 
 # score list of models, return accuracy and f1 score (weighted for unbalanced classes) for each model
 def score_class_models(models=models):
@@ -316,12 +336,15 @@ def score_class_models(models=models):
 
         acc_score_list.append(model.score(X_test, y_test))
         f1_score_list.append(f1_score(y_test, y_pred, average='weighted'))
+        print(f'{model} \n standard_confusion_matrix(y_test, y_pred) \n')
         
     for model, score in zip(models, acc_score_list):
         print(f'{model} accuracy: {round(score * 100, 2)} %')
              
     for model, score in zip(models, f1_score_list):
         print(f'{model} f1: {round(score * 100, 2)} %')
+
+    
 
     return
 
@@ -341,17 +364,14 @@ def score_class_models(models=models):
 # cross validate best model
 # stratified Kfold for unbalanced classes
 
-# kf = KFold(n_splits=10)
-# KFold(n_splits=2, random_state=None, shuffle=False)
+skf = StratifiedKFold(n_splits=10)
 
-# def Kfold_cv(X_train, X_test, y_train, y_test):
-#     for train_index, test_index in kf.split(X):
-#         print("TRAIN:", train_index, "TEST:", test_index)
-#         X_train, X_test = X[train_index], X[test_index]
-#         y_train, y_test = y[train_index], y[test_index]
-#     return
+# for train_index, test_index in skf.split(X, y):
+#     print("TRAIN:", train_index, "TEST:", test_index)
+#     X_train, X_test = X[train_index], X[test_index]
+#     y_train, y_test = y[train_index], y[test_index]
 
-# print(Kfold_cv(X_train, X_test, y_train, y_test))
+
 
 
 
@@ -366,17 +386,28 @@ def score_class_models(models=models):
 # k means clustering to find clusters, evaluate clusters, 
 
 
-
 # use tfidf vectorizer on cleaned corpus to get term frequency matrix
-# tv = TfidfVectorizer()
-# corpus_tfm = tv.fit_transform(cleaned_corpus)
+tv = TfidfVectorizer()
+corpus_tfm = tv.fit_transform(df.tweet)
+# term frequency matrix is shape (14503, 13523)
 
 # use pca to regularize term frequency matrix
-# pca = PCA(n_components=100).fit(corpus_tfm)
+pca = TruncatedSVD(100)
+truncated = pca.fit_transform(corpus_tfm)
+# truncated tfm shape is 14503, 100
+
 
 # find clusters with K Means Clustering
-# kmeans = KMeans(n_clusters=3, n_jobs=-1)
-# kmeans.fit(corpus_tfm)
+kmeans = KMeans(n_clusters=3, n_jobs=-1)
+kmeans.fit(truncated)
+# kmeans.cluster_centers.shape is 3,100
+
+
+
+
+
+
+
 
 
 
