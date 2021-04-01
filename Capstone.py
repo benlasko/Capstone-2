@@ -327,6 +327,18 @@ models = [MLPClassifier(hidden_layer_sizes=250, activation='relu', solver='adam'
 
 # score list of models, return accuracy and f1 score (weighted for unbalanced classes) for each model
 def score_class_models(models=models):
+    '''
+    Scores multiple classification models.
+
+    Parameter
+    ----------
+    models:  list
+        List of classification models to run.
+
+    Returns
+    ----------
+    Accuracy and F1 scores for each model.
+    '''
     acc_score_list = []
     f1_score_list = []
 
@@ -336,16 +348,14 @@ def score_class_models(models=models):
 
         acc_score_list.append(model.score(X_test, y_test))
         f1_score_list.append(f1_score(y_test, y_pred, average='weighted'))
-        print(f'{model} \n standard_confusion_matrix(y_test, y_pred) \n')
+        # print(f'{model} \n standard_confusion_matrix(y_test, y_pred) \n')
         
     for model, score in zip(models, acc_score_list):
         print(f'{model} accuracy: {round(score * 100, 2)} %')
              
     for model, score in zip(models, f1_score_list):
         print(f'{model} f1: {round(score * 100, 2)} %')
-
-    
-
+        
     return
 
 
