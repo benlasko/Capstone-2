@@ -21,6 +21,4 @@
 
 ![No-Tuning](/images/no-tuning.png)
 
-
-
 ![Some-Tuning](/images/some-tuning.png)
