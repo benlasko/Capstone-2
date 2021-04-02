@@ -60,7 +60,7 @@ df['sent'] = df['sent'].map({'positive':1, 'negative':-1, 'neutral':0})
 # single string of all tweet text
 corpus = ''
 for text in df.tweet:  
-    corpus += ''.join(text)
+    corpus += ''.join(text) + ' '
 
 # list of words in all tweets
 list_words_raw_corpus = corpus.split()
@@ -74,7 +74,7 @@ NLP
 # stopwords are nltk stopwords
 # add new stopwords
 StopWords = set(stopwords.words('english'))
-add_stopwords = {'flight', 'virgin america', 'virginamerica' 'united', 'southwest', 'southwestair', 'delta', 'us airways', 'usairways', 'american', 'americanair', 'aa', 'jet blue', 'jetblue', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'twenty four'}
+add_stopwords = {'flight', 'virgin america', 'virginamerica', 'united', 'southwest', 'southwestair', 'delta', 'us airways', 'usairways', 'american', 'americanair', 'aa', 'jet blue', 'jetblue', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'twenty four', '@virginamerica', '@united', '@southwest', '@delta', '@usairways', '@americanair', '@jetblue', '@delta'}
 StopWords = StopWords.union(add_stopwords)
 
 # text cleaning pipeline
@@ -116,6 +116,7 @@ def text_cleaner(text, additional_stop_words=[]):
     text_nurl = remove_url(text_nnls)
     words = split_text_into_words(text_nurl)
     words_nsw = remove_stopwords(words)
+    # words_nswa = remove_stopwords(words_nsw)
     lemmatized = lemmatizer(words_nsw)
     cleaned_text = string_from_list(lemmatized)
     return cleaned_text
@@ -206,15 +207,19 @@ def lexical_diversity(text):
     return f'Proportion of unique words: {round(len(set(txt)) / len(txt), 2)}'
 
 
-# concords = cleaned_corpus.concordance('get', lines=10)
-# concords = text.concordance('cleaned_corpus')
-# concords.concordance('get')
+
+
+
+text = nltk.Text(cleaned_corpus.split())
+text.concordance('thank', lines=8)
+text.concordance('service', lines=8)
+
+
 
 
 
 '''
 Supervised learning classification
-
 '''
 
 # count vectorizer (min_df ignores terms appearing in less than n docs.  max_df ignores words that are in more than n docs. min_df and max_df can take abs numbers or proportion)
@@ -239,6 +244,8 @@ cv = CountVectorizer(stop_words='english')
 # apply text cleaner to each tweet
 df['tweet'] = df['tweet'].apply(text_cleaner)
 
+
+
 # train/test split, stratify for unbalanced classes
 X = df.tweet
 y = df.sent
@@ -258,7 +265,7 @@ tv = TfidfVectorizer()
 #list classification models to test, no tuning
 # MultinomialNB(), SVC(), DecisionTreeClassifier(), RandomForestClassifier(), MLPClassifier()
 
-models = [DecisionTreeClassifier()]
+models = [SVC(C=6, class_weight='balanced')]
 
 # tuned model list
 # models = [RandomForestClassifier(n_estimators=12000, max_features=3), MLPClassifier(hidden_layer_sizes=500, activation='relu', solver='adam', alpha=.05, batch_size=10, learning_rate='adaptive')]
@@ -285,18 +292,12 @@ def score_class_models(models=models):
     return
 
 # confusion matrix for best model
-def confusion_matrix(model):
+def conf_matrix(model):
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
     return confusion_matrix(y_test, y_pred)
 
-
-
-'''
-Cross Validation
-'''
-
-# cross validate best model
+# cross validation for the best model
 # use stratified Kfold for unbalanced classes
 
 def stratified_k_fold(model, n_folds=5):
