@@ -101,4 +101,4 @@
 
 <br>
 
-### In the future I'd like to revisit this project to better tune the supervised learning models and analyze the clusters formed by KMeans to find their simliarities to create labels for each cluster.
+### In the future I'd like to revisit this project to better tune the supervised learning models, include n-grams in my text analysis, and analyze the clusters formed by KMeans to create labels for each cluster.
