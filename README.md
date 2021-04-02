@@ -1,11 +1,9 @@
 # **Sentiment Analysis on Tweets**
 ### Sentiment analysis can be used for a variety of purposes including assessing public sentiment about products or events, predicting social unrest, guiding policy making, and helping to decide how to best allocate resources.  So although the dataset I used for this project has about 14000 tweets about major airlines, each categorized as positive, negative, or neutral, my interest in doing this was to learn and practice using Natural Language Processing and predictive modeling for sentiment analysis to be able to apply it in a variety of different ways.  To do this I built functions to perform EDA, text analysis, text cleaning, predictive modeling, cross validation, and unsupervised learning techniques.
 
-<br>
 
 ###  I started by getting the data into a Pandas dataframe, replacing NaNs, removing duplicate rows, and shortening timeseries data to the day and into datetime objects, although I mainly used the tweets and their prelableled sentiments in my analysis.  Tweets were categorized as positive, negative, and neutral.  
 
-<br>
 
 ###  The tweets were mostly negative which was no surprise with Twitter.  The distribution of the tweets was about 60% negative, 25% neutral, and 15% positive.
 
@@ -28,7 +26,7 @@
 ![Unclean-Corp-WC](/images/unclean-corp-wc.png)
 
 
-<br>
+
 
 ### I made a text processing pipeline that did the following:
 * Lowercased text
@@ -76,7 +74,7 @@
 
 <br>
 
-### I used some supervised learning classification models to try and find a good predictive model to categorize tweets into positive, negative, or neutral categories.  For each model I found the accuracy and F1 scores.
+### I used some supervised learning classification models to try and find a good predictive model to categorize tweets into positive, negative, or neutral categories.
 
 * Naive Bayes
 * Decision Tree
@@ -88,11 +86,9 @@
 
 ### Using random guessing the chances of correctly classifying a tweet would be
 
-<br>
+### Running models with the default parameters resulted in accuracy and f1 scores between 70-78% with Support Vector Machine performing the best.  F1 scores were usually only about 1-2% less than accuracy scores.
 
-### Running models with the default parameters resulted in accuracy and f1 scores between 70% - 78% with the Support Vector Machine performing the best.
-
-### Model scores using default parameters.
+#### Model scores using default parameters.
 ![No-Tuning](/images/no-tuning.png)
 
 ### I increased the number of trees in the Random Forest model as high as 12000, and tried different max features and class weights but didn't get any scores higher than 77%.
@@ -107,7 +103,7 @@
 
 <br>
 
-### Model scores after tuning.
+#### Model scores after tuning.
 ![Some-Tuning](/images/some-tuning.png)
 
 <br>
