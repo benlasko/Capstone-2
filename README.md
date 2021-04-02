@@ -1,4 +1,5 @@
 # **Sentiment Analysis on Tweets**
+## Capstone 2 for the Galvanize Data Science Immersive
 ### Sentiment analysis can be used for a variety of purposes including assessing public sentiment about products or events, predicting social unrest, guiding policy making, and helping to decide how to best allocate resources.  So although the dataset I used for this project has about 14000 tweets about major airlines, each categorized as positive, negative, or neutral, my interest in doing this was to learn and practice using Natural Language Processing and predictive modeling for sentiment analysis to be able to apply it in a variety of different ways.  To do this I built functions to perform EDA, text analysis, text cleaning, predictive modeling, cross validation, and unsupervised learning techniques.
 
 
