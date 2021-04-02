@@ -1,22 +1,22 @@
-# Capstone 2
+'''
+Sentiment analysis on airline tweets.  
+Capstone 2 for the Galvanize Data Science Immersive.
+'''
 
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 from wordcloud import WordCloud, STOPWORDS
-from nltk.corpus import stopwords 
+import nltk.corpus
+from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
+from nltk.text import Text
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 import itertools
 import re
 import collections
-from nltk.text import Text 
-import nltk.corpus 
-
-
 
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
@@ -32,29 +32,14 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.neural_network import MLPClassifier
 
 from sklearn.metrics import confusion_matrix
-from sklearn.metrics import precision_score
-from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
-from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import StratifiedKFold
 
-from sklearn.decomposition import TruncatedSVD
-
 
 
 '''
-EDA
-
-NLP
-
-Classifiers using prelabeled data
-
-Unsupervised analysis
-
+Data Wrangling and EDA
 '''
-
-
-'''Data Wrangle'''
 
 all_data = pd.read_csv('data/Tweets.csv')
 # all_data = pd.read_csv('data/Tweets.csv', encoding='ISO-8859-1')
@@ -82,46 +67,11 @@ list_words_raw_corpus = corpus.split()
 
 
 
+'''
+NLP
+'''
 
-
-
-
-
-'''NLP'''
-
-# word cloud function
-def word_clouder(text, 
-                width=700, 
-                height=700, 
-                background_color='black', 
-                min_font_size=12
-                ):
-    '''
-    Generates word cloud of text.
-    Parameter
-    ----------
-    text:  str 
-        A string of words to create the word cloud from.
-    width:  int 
-        Width in pixels of word cloud image.
-    height:  int 
-        Height in pixels of word cloud image.
-    background_color:  str
-        Color of background of word cloud image
-    min_font_size:  int
-        Minimum font size of 
-    Returns
-    ----------
-    Word cloud image.
-        
-    '''
-    return WordCloud(width=800, height=800,
-                     background_color='black',
-                     min_font_size=12).generate(text)
-
-
-
-# stopwords are the nltk stopwords
+# stopwords are nltk stopwords
 # add new stopwords
 StopWords = set(stopwords.words('english'))
 add_stopwords = {'flight', 'virgin america', 'virginamerica' 'united', 'southwest', 'southwestair', 'delta', 'us airways', 'usairways', 'american', 'americanair', 'AA', 'jet blue', 'jetblue'}
@@ -172,32 +122,44 @@ def text_cleaner(text, additional_stop_words=[]):
 
 cleaned_corpus=text_cleaner(corpus)
 
-# tester = text_cleaner(corpus[:2000])
-
-
-
-
-
-# concords = cleaned_corpus.concordance('get', lines=10)
-# concords = text.concordance('cleaned_corpus')
-# concords.concordance('get')
-
-
-
-
-
+# word cloud function
+def word_clouder(text, 
+                width=700, 
+                height=700, 
+                background_color='black', 
+                min_font_size=12
+                ):
+    '''
+    Generates word cloud of text.
+    Parameter
+    ----------
+    text:  str 
+        A string of words to create the word cloud from.
+    width:  int 
+        Width in pixels of word cloud image.
+    height:  int 
+        Height in pixels of word cloud image.
+    background_color:  str
+        Color of background of word cloud image
+    min_font_size:  int
+        Minimum font size of 
+    Returns
+    ----------
+    Word cloud image.
+        
+    '''
+    return WordCloud(width=800, height=800,
+                     background_color='black',
+                     min_font_size=12).generate(text)
 
 # create word cloud of cleaned corpus
-
-# cleaned_corpus_wordcloud = word_clouder(cleaned_corpus)
-# plt.figure(figsize = (8, 8), facecolor = None)
-# plt.imshow(cleaned_corpus_wordcloud)
-# plt.axis("off")
-# plt.tight_layout(pad = 1)
+cleaned_corpus_wordcloud = word_clouder(cleaned_corpus)
+plt.figure(figsize = (8, 8), facecolor = None)
+plt.imshow(cleaned_corpus_wordcloud)
+plt.axis("off")
+plt.tight_layout(pad = 1)
 # plt.show()
 # plt.savefig('cleaned corpus word cloud')
-
-
 
 def common_words_graph(text, num_words=15, title='most common words'):
     '''
@@ -234,65 +196,26 @@ def common_words_graph(text, num_words=15, title='most common words'):
     plt.show()
     return
 
-
-
-
-
-
-
-
-
-
-
-# total unique words
-# def num_unique_words(text):
-#     txt = text.split()
-#     return len(set(txt))
-
-# average repitition of words
-# def avg_rep(text):
-#     return round(len(text)/len(set(text)), 2)
-
+# Lexical diversity
 # total words, total unique words, average repitition, proportion of unique words
-# def lexical_diversity(text):
-#     txt = text.split()
-#     print(f'Total words: {len(txt)}')
-#     print(f'Total unique words: {len(set(txt))}')
-#     print(f'Average word repetition: {round(len(text)/len(set(text)), 2)}')
-#     return f'Proportion of unique words: {round(len(set(txt)) / len(txt), 2)}'
+def lexical_diversity(text):
+    txt = text.split()
+    print(f'Total words: {len(txt)}')
+    print(f'Total unique words: {len(set(txt))}')
+    print(f'Average word repetition: {round(len(text)/len(set(text)), 2)}')
+    return f'Proportion of unique words: {round(len(set(txt)) / len(txt), 2)}'
 
 
-
-
-
-
+# concords = cleaned_corpus.concordance('get', lines=10)
+# concords = text.concordance('cleaned_corpus')
+# concords.concordance('get')
 
 
 
 '''
-Supervised Learning.  Classification.
+Supervised learning classification
 
-Try naive bayes, svc, randomforest, logistic reg, neural network:  mlpregressor, LSTM, 
 '''
-def standard_confusion_matrix(y_true, y_pred, sklearn=True):
-    if sklearn:
-        [[tn, fp], [fn, tp]] = confusion_matrix(y_true, y_pred)
-    else:
-        tp, fp, fn, tn = 0, 0, 0, 0
-        for tup in zip(y_true, y_pred):
-            if tup == (1, 1):
-                tp += 1
-            elif tup == (0, 1):
-                fp += 1
-            elif tup == (1, 0):
-                fn += 1
-            else:
-                tn += 1
-    return np.array([[tp, fp], [fn, tn]])
-
-
-#  Tfidf vectorizer
-tv = TfidfVectorizer()
 
 # count vectorizer (min_df ignores terms appearing in less than n docs.  max_df ignores words that are in more than n docs. min_df and max_df can take abs numbers or proportion)
 cv = CountVectorizer(stop_words='english')
@@ -312,13 +235,8 @@ cv = CountVectorizer(stop_words='english')
 # print(cv.stop_words_)
 
 
-#  Tfidf vectorizer
-tv = TfidfVectorizer()
 
-
-
-
-# apply text cleaner to each doc
+# apply text cleaner to each tweet
 df['tweet'] = df['tweet'].apply(text_cleaner)
 
 # train/test split, stratify for unbalanced classes
@@ -331,14 +249,17 @@ X_train = cv.fit_transform(X_train).toarray()
 X_test = cv.transform(X_test).toarray()
 
 # apply tfidf vectorizer to train/test data
+#  Tfidf vectorizer
+tv = TfidfVectorizer()
+
 # X_train = tv.fit_transform(X_train)
 # y_test = tv.fit_transform(y_test)
 
 #list classification models to test, no tuning
-# models = [MultinomialNB(), SVC(), DecisionTreeClassifier(), RandomForestClassifier(), MLPClassifier()]
+# models = [MultinomialNB(), SVC(), DecisionTreeClassifier(), , MLPClassifier()]
 
 # tuned model list
-models = [MLPClassifier(hidden_layer_sizes=250, activation='relu', solver='adam', alpha=.05, batch_size=10, learning_rate='adaptive')]
+models = [RandomForestClassifier(n_estimators=12000, max_features=3), MLPClassifier(hidden_layer_sizes=500, activation='relu', solver='adam', alpha=.05, batch_size=10, learning_rate='adaptive')]
 
 # score list of models, return accuracy and f1 score (weighted for unbalanced classes) for each model
 def score_class_models(models=models):
@@ -358,27 +279,19 @@ def score_class_models(models=models):
         print(f'\n')
         print(f'{model} f1: {round(f1_score * 100, 2)} %')     
 
-
     # for model, score in zip(models, f1_score_list):
-    
     return
-
-
-
-
-# precision_score = []
-# recall_score = []
-# precision_score.append(precision_score(y_test, y_predict))
-# recall_score.append(recall_score(y_test, y_predict))
 
 # confusion matrix for best model
 
 
 
-'''Cross Validation'''
+'''
+Cross Validation
+'''
+
 # cross validate best model
 # stratified Kfold for unbalanced classes
-
 
 def stratified_k_fold(model, n_folds=5):
     
@@ -405,14 +318,9 @@ def stratified_k_fold(model, n_folds=5):
 
 
 
-
-
-
-
-
-
-
-'''Unsupervised Learning'''
+'''
+Unsupervised Learning
+'''
 # term frequency matrix has thousands of features.  reduce features using pca?
 # k means clustering to find clusters, evaluate clusters, 
 
