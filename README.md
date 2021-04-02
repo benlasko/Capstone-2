@@ -10,11 +10,9 @@
 
 <br>
 
-
 ![Sentiment-Counts](/images/sent-counts.png)
 
 <br>
-
 
 ![Sentiment-Counts-Airline](/images/sent-counts-airline.png)
 
@@ -22,8 +20,6 @@
 ### This wordcloud shows the most common words from all the tweets before the text was cleaned and analyzed.
 
 ![Unclean-Corp-WC](/images/unclean-corp-wc.png)
-
-
 
 <br>
 
@@ -40,17 +36,15 @@
 * Returns the cleaned text
 
 ### So text like this:
-1. @VirginAmerica why are your first fares in May over three times more than other carriers when all seats are available to select???
-2. 
-3. To be or not to be?
-4. In his house at R'lyeh dead Cthulhu waits dreaming.
+1. @USAirways 2 hours and counting waiting to get into a gate in Philadelphia. Just icing on the cake for a miserable flight experience
+2. To be or not to be?
+3. In his house at R'lyeh dead Cthulhu waits dreaming.
 
 
 ### Becomes:
-1. first fare may time carrier seat available select
-2. 
-3. ''
-4. house rlyeh dead cthulhu wait dreaming
+1. hour counting waiting get gate philadelphia icing cake miserable experience
+2. ''
+3. house rlyeh dead cthulhu wait dreaming
 
 ### Line 3 is a good example of why natural language processing can be difficult.
 
@@ -71,7 +65,7 @@
 
 <br>
 
-### Examples of some of the context in which the most common words were found.
+### Examples of the context in which some the most common words were found.
 #### "thank"
 
 ![thank-context](/images/thank-context.png)
@@ -80,10 +74,7 @@
 
 ![service-context](/images/service-context.png)
 
-
-
 <br>
-
 
 ### I used supervised learning classification models to try and build a good predictive model to classify tweets into their positive, negative, or neutral categories.  Since tweets are short I used Sklearn's CountVectorizer instead of the tfidf vectorizer. 
 
@@ -93,12 +84,12 @@
 * Support Vector Machine
 * Multi Layer Perceptron neural network
 
-
 ### Using random guessing the chances of correctly classifying a tweet would be
 
 ### Running models with the default parameters resulted in accuracy and f1 scores between 70-78% with Support Vector Machine performing the best.  F1 scores were usually only about 1-2% less than accuracy scores.
 
 #### Model scores using default parameters.
+
 ![No-Tuning](/images/no-tuning.png)
 
 ### I increased the number of trees in the Random Forest model as high as 12000, and tried different max features and class weights but didn't get any scores higher than 77%.
@@ -108,6 +99,7 @@
 ### By tuning the models to account for the imbalanced classes and making changes to my stopwords list and text pipeline I was able to raise the MLP classifier accuracy about 7% but other models performed relatively similarly to when they ran using the default parameters.  SVM, Random Forest, and MLP models performed better than the others I tried.
 
 #### Model scores after tuning.
+
 ![Some-Tuning](/images/some-tuning.png)
 
 
