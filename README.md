@@ -73,21 +73,14 @@
 
 ### Examples of some of the context in which the most common words were found.
 #### "thank"
----
-![thank-context](/images/1112.png)
 
----
+![thank-context](/images/thank-context.png)
+
 #### "service"
----
-#### change fee online emailed customer service team let know need tracking number 
-#### cy medium bag thanks going customer service anyway speak human asap thank happe
-#### ant supp biz traveler like customer service like neverflyvirginforbusiness ive 
-#### sed apt people exp amazing customer service raeann sf shes best customerservice
-####  best customerservice flying called service line hung awesome sarcasm site trip
-####  totally folk problem like customer service min delay connecting passenger seem
-#### tonight absolute best team customer service ever every time fly im delighted th
 
-------
+![service-context](/images/service-context.png)
+
+
 
 <br>
 
