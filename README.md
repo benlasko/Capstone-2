@@ -88,7 +88,7 @@
 
 ### For the Multi Layer Perceptron neural network I added up to 500 layers, experimented with alphas from .0001 to .05, used adaptive and invscaling learning rates, tried different solvers, relu and tanh activations, and batch sizes as low as 10.  I wasn't able to tune the MLP model to get a score higher than about 77%.
 
-### By tuning the models to account for the imbalanced classes and making changes to my stopwords list I was able to raise the Multi Layer Perceptron neural network model accuracy about 7% from its original scores around 70% but other models performed relatively simliarly to running them with the default parameters.  SVM, Random Forest, and Multi Layer Perceptron models performed the best.
+### By tuning the models to account for the imbalanced classes and making changes to my stopwords list I was able to raise the MLP classifier accuracy about 7% from its original scores around 70% but other models performed relatively simliarly to when they ran using the default parameters.  SVM, Random Forest, and MLP models performed better than the others I tried.
 
 #### Model scores after tuning.
 ![Some-Tuning](/images/some-tuning.png)
@@ -101,4 +101,4 @@
 
 <br>
 
-### In the future I'd like to revisit this project to better tune the supervised learning models and analyze the clusters formed by KMeans to find their simliarities and be able to create labels for each cluster.
+### In the future I'd like to revisit this project to better tune the supervised learning models and analyze the clusters formed by KMeans to find their simliarities to create labels for each cluster.
