@@ -18,15 +18,13 @@
 ![Sentiment-Counts-Airline](/images/sent-counts-airline.png)
 
 
-<br>
-
-
 ### This wordcloud shows the most common words from all the tweets before the text was processed.
 
 ![Unclean-Corp-WC](/images/unclean-corp-wc.png)
 
 
 
+<br>
 
 ### I made a text processing pipeline that did the following:
 * Lowercased text
@@ -46,8 +44,6 @@
 * 
 
 
-<br>
-
 ### After cleaning:
 * 
 * 
@@ -57,7 +53,6 @@
 
 ### The wordcloud and graph below show the most common words from all the tweets after going through the cleaning process.
 
-<br>
 
 ![Clean-WC](/images/clean-corp-wc.png)
 
@@ -72,7 +67,6 @@
  * Average word repetition: 36289.93
  * Proportion of unique words: 0.14
 
-<br>
 
 ### I used some supervised learning classification models to try and find a good predictive model to categorize tweets into positive, negative, or neutral categories.
 
@@ -82,7 +76,6 @@
 * Support Vector Machine
 * Multi Layer Perceptron neural network
 
-<br>
 
 ### Using random guessing the chances of correctly classifying a tweet would be
 
@@ -93,25 +86,15 @@
 
 ### I increased the number of trees in the Random Forest model as high as 12000, and tried different max features and class weights but didn't get any scores higher than 77%.
 
-<br>
-
 ### For the Multi Layer Perceptron neural network I added up to 500 layers, experimented with alphas from .00001 to .05, used adaptive and inversely scaled learning rates, tried different solvers, batch sizes as low as 10, and tanh activation.  I wasn't able to tune the MLP model to get a score higher than about 77%.
 
-<br>
-
 ### By tuning the models to account for the imbalanced classes and making changes to my stopwords list I was able to raise the Multi Layer Perceptron neural network model accuracy about 7% from its original scores around 70% but other models performed relatively simliarly to running them with the default parameters.  SVM, Random Forest, and Multi Layer Perceptron models performed the best.
-
-<br>
 
 #### Model scores after tuning.
 ![Some-Tuning](/images/some-tuning.png)
 
-<br>
 
 ### The model with the highest score was  .   I used stratifed K Fold cross validation to test the model and the results were  .
-
-
-<br>
 
 
 ### Finally, although the dataset had the tweets prelabeled, I wanted to try using unsupervised learning techniques to analyze the corpus.  I used a tfidf vectorizer to create a term frequency matrix, used PCA to shrink the matrix from over 13000 features to 100, and used KMeans Clustering to form three clusters.
