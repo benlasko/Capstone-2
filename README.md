@@ -37,25 +37,25 @@
 
 ### So text like this:
 1. @VirginAmerica why are your first fares in May over three times more than other carriers when all seats are available to select???
-2. To be or not to be?
-3. In his house at R'lyeh dead Cthulhu waits dreaming.
+2. In his house at R'lyeh dead Cthulhu waits dreaming. 
+3. To be or not to be?
 4. @USAirways 2 hours and counting waiting to get into a gate in Philadelphia. Just icing on the cake for a miserable flight experience
 
 
 ### Becomes:
 1. first fare may time carrier seat available select
-2. ''
-3. house rlyeh dead cthulhu wait dreaming
+2. house rlyeh dead cthulhu wait dreaming 
+3. ''
 4. hour counting waiting get gate philadelphia icing cake miserable experience
 
-### Line 3 is a good example of why natural language processing can be difficult.
+### Line 2 is a good example of why natural language processing can be difficult.
 
 <br>
 
 ### The cleaned corpus had about 18000 unique words and the lexical diversity of the corpus was somewhat limited.
  
  * Total words: 129374
- * Total unique words: 18350bn 
+ * Total unique words: 18350
  * Proportion of unique words: 0.14
 
 ### The wordcloud and graph below show the most common words from all the tweets after going through the cleaning process.
@@ -98,6 +98,8 @@
 
 ### For the Multi Layer Perceptron neural network I added up to 500 layers, experimented with alphas from .0001 to .05, used adaptive and invscaling learning rates, tried different solvers, tried relu and tanh activations, and batch sizes as low as 10.  I wasn't able to tune the MLP model to get a score higher than about 77%.
 
+### I also tried tuning the SVM SVC using different parameters for regularization strength (C=3, C=6) and with "balanced" for the class_weight parameter.
+
 ### By tuning the models to account for the imbalanced classes and making changes to my stopwords list and text pipeline I was able to raise the MLP classifier accuracy about 7% but other models performed relatively similarly to when they ran using the default parameters.  SVM, Random Forest, and MLP models performed better than the others I tried.
 
 #### Model scores after tuning.
@@ -105,7 +107,7 @@
 ![Some-Tuning](/images/some-tuning.png)
 
 
-### The model with the highest score was  .   I used stratifed KFold cross validation to test the model and the results were  .
+### The model with the highest score, 78.15%, was the Support Vector Machines SVC(C=3) model.  Here's the confusion matrix for that model.I used stratifed KFold cross validation to test the model and the results were  .
 
 
 ### Finally, although the dataset had the tweets prelabeled, I wanted to try using unsupervised learning techniques to analyze the corpus.  I used a tfidf vectorizer to create a term frequency matrix of the entire corpus, used PCA to shrink the matrix from over 13000 features to 100 features, and used KMeans Clustering to form three clusters.
@@ -113,3 +115,6 @@
 <br>
 
 ### In the future I'd like to revisit this project to better tune the supervised learning models, include n-grams in my text analysis, and analyze the clusters formed by KMeans to create labels for each cluster.
+
+
+![Some-Tuning](/images/maybe-just-complain.png)

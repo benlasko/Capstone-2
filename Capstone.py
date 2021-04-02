@@ -232,15 +232,10 @@ def get_context(text, word, lines=10):
 
 
 
-
-
 '''
 Supervised learning classification
 '''
-print(np.random.choice([0,1,2], 1000, p = [.63, .21, .16]))
 
-def random_guess_results(classes=[0,1], iters=100, p=[.5,.5]): 
-    return np.random.choice(classes, iters, p)
 
 # count vectorizer (min_df ignores terms appearing in less than n docs.  max_df ignores words that are in more than n docs. min_df and max_df can take abs numbers or proportion)
 cv = CountVectorizer(stop_words='english')
@@ -312,8 +307,6 @@ def score_class_models(models=models):
         print(f'{model} accuracy: {round(score * 100, 2)} %')
         print(f'{model} f1: {round(f1_scored * 100, 2)} %')     
 
-
-
 # confusion matrix for best model
 def conf_matrix(model):
     model.fit(X_train, y_train)
@@ -322,6 +315,7 @@ def conf_matrix(model):
 
 # cross validation for the best model
 # use stratified Kfold for unbalanced classes
+# need to fix this function: KeyError: 'Passing list-likes to .loc or [] with any missing labels is no longer supported, see https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#deprecate-loc-reindex-listlike'
 
 def stratified_k_fold(model, n_folds=5):
     skf = StratifiedKFold(n_splits=n_folds)
@@ -348,7 +342,7 @@ def stratified_k_fold(model, n_folds=5):
 
 
 '''
-Unsupervised Learning.  Code is currently incomplete.
+Unsupervised Learning.  This code is currently incomplete.
 '''
 # term frequency matrix has thousands of features.  reduce features using pca?
 # k means clustering to find clusters, evaluate clusters, 
