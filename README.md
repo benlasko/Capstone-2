@@ -41,14 +41,18 @@
 
 ### So text like this:
 1. @VirginAmerica why are your first fares in May over three times more than other carriers when all seats are available to select???
-2. To be or not to be?
-3. In his house at R'lyeh dead Cthulhu waits dreaming.
+2. 
+3. To be or not to be?
+4. In his house at R'lyeh dead Cthulhu waits dreaming.
 
 
 ### Becomes:
 1. first fare may time carrier seat available select
-2. ''
-3. house rlyeh dead cthulhu wait dreaming
+2. 
+3. ''
+4. house rlyeh dead cthulhu wait dreaming
+
+### Line 3 is a good example of why natural language processing can be difficult.
 
 <br>
 
@@ -68,32 +72,25 @@
 <br>
 
 ### Examples of some of the context in which the most common words were found.
-* thank
+#### "thank"
 ---
-**NOTE**
-
-omer service anyway speak human asap thank happened doom cant supp biz traveler
-t naelah represents team beautifully thank beautiful frontend design right cool
-ice ever every time fly im delighted thank provide complimentary upgrade first 
-alone w kid infant priority boarding thank checking ticket purchased customer h
- id love know policy damaged luggage thank follow many apology r worse airline 
-e revue website im trying check done thank quick response apparently faster sit
-ggage agent miranda think wasnt help thank easy itinerary shift impending weath
+![thank-context](/images/thank-context.png)
 
 ---
-
+#### "service"
 ---
-**NOTE**
+#### change fee online emailed customer service team let know need tracking number 
+#### cy medium bag thanks going customer service anyway speak human asap thank happe
+#### ant supp biz traveler like customer service like neverflyvirginforbusiness ive 
+#### sed apt people exp amazing customer service raeann sf shes best customerservice
+####  best customerservice flying called service line hung awesome sarcasm site trip
+####  totally folk problem like customer service min delay connecting passenger seem
+#### tonight absolute best team customer service ever every time fly im delighted th
 
-change fee online emailed customer service team let know need tracking number 
-cy medium bag thanks going customer service anyway speak human asap thank happe
-ant supp biz traveler like customer service like neverflyvirginforbusiness ive 
-sed apt people exp amazing customer service raeann sf shes best customerservice
- best customerservice flying called service line hung awesome sarcasm site trip
- totally folk problem like customer service min delay connecting passenger seem
-tonight absolute best team customer service ever every time fly im delighted th
+------
 
----
+<br>
+
 
 ### I used supervised learning classification models to try and build a good predictive model to classify tweets into their positive, negative, or neutral categories.  Since tweets are short I used Sklearn's CountVectorizer instead of the tfidf vectorizer. 
 
