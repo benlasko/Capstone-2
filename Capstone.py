@@ -41,9 +41,46 @@ from sklearn.model_selection import StratifiedKFold
 Data Wrangling and EDA
 '''
 
+def data_overview(df):
+    '''
+    Get an overview of the data to start EDA.
+
+    Parameter
+    ----------
+    df:  pd.DataFrame 
+        A Pandas DataFrame
+
+    Returns
+    ----------
+        First five rows (.head())
+        Shape (.shape)
+        All columns (.columns)
+        Readout of how many non-null values and the dtype for each column (.info())
+        Numerical column stats (.describe())
+        Sum of unique value counts of each column
+        Number of duplicate rows
+        Total of null values per column
+    '''
+
+    print("\u0332".join("HEAD "))
+    print(f'{df.head()} \n\n')
+    print("\u0332".join("SHAPE "))
+    print(f'{df.shape} \n\n')
+    print("\u0332".join("COLUMNS "))
+    print(f'{df.columns}\n\n')
+    print("\u0332".join("INFO "))
+    print(f'{df.info()}\n\n')
+    print("\u0332".join("UNIQUE VALUES "))
+    print(f'{df.nunique()} \n\n')
+    print("\u0332".join("NUMERICAL COLUMN STATS "))
+    print(f'{df.describe()}\n\n')
+    print('\u0332'.join("TOTAL NULL VALUES IN EACH COLUMN"))
+    print(f'{df.isnull().sum()} \n\n')
+    # print('\u0332'.join("TOTAL DUPLICATE ROWS"))
+    # print(f' { int(sum(df[df.duplicated()].sum()))} \n\n')
+
 all_data = pd.read_csv('data/Tweets.csv')
 # all_data = pd.read_csv('data/Tweets.csv', encoding='ISO-8859-1')
-
 
 # drop unwanted columns 
 df = all_data.drop(columns=['tweet_id','airline_sentiment_confidence', 'negativereason', 'negativereason_confidence', 'airline_sentiment_gold', 'negativereason_gold'])
@@ -68,6 +105,7 @@ for text in df.tweet:
 
 # list of words in all tweets
 list_words_raw_corpus = corpus.split()
+
 
 
 '''
@@ -236,7 +274,6 @@ def get_context(text, word, lines=10):
 Supervised learning classification
 '''
 
-
 # count vectorizer (min_df ignores terms appearing in less than n docs.  max_df ignores words that are in more than n docs. min_df and max_df can take abs numbers or proportion)
 cv = CountVectorizer(stop_words='english')
 
@@ -254,10 +291,8 @@ cv = CountVectorizer(stop_words='english')
 # see which words have become stopwords for vectorizer
 # print(cv.stop_words_)
 
-
-
 # apply text cleaner to each tweet
-# df['tweet'] = df['tweet'].apply(text_cleaner)
+df['tweet'] = df['tweet'].apply(text_cleaner)
 
 
 # train/test split, stratify for unbalanced classes
@@ -273,23 +308,20 @@ def vec_it(text, vectorizer=CountVectorizer):
     vecced_text = vectorizer.fit_transform(words)
     return vecced_text
 
-
 X_train = cv.fit_transform(X_train).toarray()
 X_test = cv.transform(X_test).toarray()
 
 # apply tfidf vectorizer to train/test data
 #  Tfidf vectorizer
-tv = TfidfVectorizer()
+# tv = TfidfVectorizer()
 # X_train = tv.fit_transform(X_train)
 # y_test = tv.fit_transform(y_test)
 
 #list classification models to test, no tuning
-# MultinomialNB(), SVC(), DecisionTreeClassifier(), RandomForestClassifier(), MLPClassifier() SVC(C=6, class_weight='balanced')
-
-models = [SVC(C=6, class_weight='balanced')]
+# models = [MultinomialNB(), SVC(), DecisionTreeClassifier(), RandomForestClassifier(), MLPClassifier() SVC(C=6, class_weight='balanced')]
 
 # tuned model list
-# models = [MLPClassifier(hidden_layer_sizes=500, activation='relu', solver='adam', alpha=.05, batch_size=10, learning_rate='adaptive'), RandomForestClassifier(n_estimators=12000, max_features=3), ]
+models = [MLPClassifier(hidden_layer_sizes=500, activation='relu', solver='adam', alpha=.05, batch_size=10, learning_rate='adaptive'), RandomForestClassifier(n_estimators=12000, max_features=3), SVC(C=6, class_weight='balanced')]
 
 # score list of models, return accuracy and f1 scores for each model
 def score_class_models(models=models):
@@ -344,6 +376,7 @@ def stratified_k_fold(model, n_folds=5):
 '''
 Unsupervised Learning.  This code is currently incomplete.
 '''
+
 # term frequency matrix has thousands of features.  reduce features using pca?
 # k means clustering to find clusters, evaluate clusters, 
 
