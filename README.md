@@ -86,8 +86,6 @@
 * Support Vector Machine
 * Multi Layer Perceptron neural network
 
-### Using random guessing the chances of correctly classifying a tweet would be
-
 ### Running models with the default parameters resulted in accuracy and f1 scores between 70-78% with Support Vector Machine performing the best.  F1 scores were usually only about 1-2% less than accuracy scores.
 
 #### Model scores using default parameters.
