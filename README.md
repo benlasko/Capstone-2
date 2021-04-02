@@ -74,7 +74,7 @@
 ### Examples of some of the context in which the most common words were found.
 #### "thank"
 ---
-![thank-context](/images/thank-context.png)
+![thank-context](/images/1112.png)
 
 ---
 #### "service"
