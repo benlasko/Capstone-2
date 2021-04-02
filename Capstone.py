@@ -74,7 +74,7 @@ NLP
 # stopwords are nltk stopwords
 # add new stopwords
 StopWords = set(stopwords.words('english'))
-add_stopwords = {'flight', 'virgin america', 'virginamerica' 'united', 'southwest', 'southwestair', 'delta', 'us airways', 'usairways', 'american', 'americanair', 'AA', 'jet blue', 'jetblue'}
+add_stopwords = {'flight', 'virgin america', 'virginamerica' 'united', 'southwest', 'southwestair', 'delta', 'us airways', 'usairways', 'american', 'americanair', 'aa', 'jet blue', 'jetblue', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'twenty four'}
 StopWords = StopWords.union(add_stopwords)
 
 # text cleaning pipeline
@@ -120,7 +120,7 @@ def text_cleaner(text, additional_stop_words=[]):
     cleaned_text = string_from_list(lemmatized)
     return cleaned_text
 
-cleaned_corpus=text_cleaner(corpus)
+cleaned_corpus = text_cleaner(corpus)
 
 # word cloud function
 def word_clouder(text, 
@@ -161,7 +161,7 @@ plt.tight_layout(pad = 1)
 # plt.show()
 # plt.savefig('cleaned corpus word cloud')
 
-def common_words_graph(text, num_words=15, title='most common words'):
+def common_words_graph(text, num_words=15, title='Most Common Words'):
     '''
     Horizontal graph of most common words in text with their counts in descending order.
 
@@ -170,13 +170,13 @@ def common_words_graph(text, num_words=15, title='most common words'):
     text:  str 
         Text to find most common words in.
     num_words:  int
-        Number of most common words to find and graph.
+        Number of most common words to graph.
     title:  str
         Title of graph.
 
     Returns
     ----------
-    PNG file of horizontal bar graph showing specified number of most common words in the passed in text string.
+    Shows graph and saves PNG file of horizontal bar graph showing specified number of most common words in the passed in text string.
     '''
     txt = text.split()
     sorted_word_counts = collections.Counter(txt)
@@ -194,7 +194,7 @@ def common_words_graph(text, num_words=15, title='most common words'):
     ax.set_title(title)
     plt.legend(edgecolor='inherit')
     plt.show()
-    return
+    return plt.save('common words graph')
 
 # Lexical diversity
 # total words, total unique words, average repitition, proportion of unique words
@@ -256,12 +256,14 @@ tv = TfidfVectorizer()
 # y_test = tv.fit_transform(y_test)
 
 #list classification models to test, no tuning
-# models = [MultinomialNB(), SVC(), DecisionTreeClassifier(), , MLPClassifier()]
+# MultinomialNB(), SVC(), DecisionTreeClassifier(), RandomForestClassifier(), MLPClassifier()
+
+models = [DecisionTreeClassifier()]
 
 # tuned model list
-models = [RandomForestClassifier(n_estimators=12000, max_features=3), MLPClassifier(hidden_layer_sizes=500, activation='relu', solver='adam', alpha=.05, batch_size=10, learning_rate='adaptive')]
+# models = [RandomForestClassifier(n_estimators=12000, max_features=3), MLPClassifier(hidden_layer_sizes=500, activation='relu', solver='adam', alpha=.05, batch_size=10, learning_rate='adaptive')]
 
-# score list of models, return accuracy and f1 score (weighted for unbalanced classes) for each model
+# score list of models, return accuracy and f1 scores for each model
 def score_class_models(models=models):
     acc_score_list = []
     f1_score_list = []
@@ -283,6 +285,10 @@ def score_class_models(models=models):
     return
 
 # confusion matrix for best model
+def confusion_matrix(model):
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    return confusion_matrix(y_test, y_pred)
 
 
 
@@ -291,10 +297,9 @@ Cross Validation
 '''
 
 # cross validate best model
-# stratified Kfold for unbalanced classes
+# use stratified Kfold for unbalanced classes
 
 def stratified_k_fold(model, n_folds=5):
-    
     skf = StratifiedKFold(n_splits=n_folds)
     scores = []
     models = []

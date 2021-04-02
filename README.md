@@ -1,12 +1,12 @@
 # **Sentiment Analysis on Tweets**
 ## Capstone 2 for the Galvanize Data Science Immersive
-### Natural language processing is a powerful tool with amazing potential.  One way to apply it is conducting sentiment analysis which can be used for a variety of purposes including assessing public sentiment about products or events, predicting social unrest, informing education and policy, and helping to decide how to allocate resources.  So although the dataset I used for this project has about 14000 tweets about six major airlines my interest in doing this was to learn and practice using natural language processing and predictive modeling for sentiment analysis to be able to apply these techniques in a variety of different ways.  To do this I built functions to perform EDA, text cleaning, text analysis, predictive modeling, cross validation, and unsupervised learning techniques.
+### Natural language processing is a profound tool with the power to help us understand our collective history, culture, and state of mind.  One way to apply it is conducting sentiment analysis which can be used for a variety of purposes including assessing public sentiment about products, events, or ideas, predicting social unrest, informing education and policy, and helping decide how to allocate resources.  So although the dataset I used for this project was a collection of tweets about airlines my interest in doing this was to learn and practice using natural language processing and predictive modeling for sentiment analysis to be able to apply these techniques in a variety of different ways.  To do this I wrote code and built functions to perform EDA, text cleaning, text analysis, predictive modeling, cross validation, and supervised/unsupervised learning techniques.
 
 
-###  I started by putting the data into a Pandas dataframe, replacing NaNs, removing duplicate rows, and shortening timeseries data to the day and converting it to datetime objects, although I mainly used the tweets and their pre-labeled sentiments in my analysis. 
+###  The dataset I used had a collection of tweets from February of 2015 about six major airlines.  The tweets were prelabeled by sentimentI started by putting the data into a Pandas dataframe, replacing NaNs, removing duplicate rows, and shortening timeseries data to the day and converting it to datetime objects, although I mainly used the tweets and their pre-labeled sentiments in my analysis. 
 
 
-###  The tweets were classified into three categories and the distribution was about 63% negative, 21% neutral, and 16% positive.
+###  The tweets were classified into positive, negative, and neutral sentiments. The distribution was 63% negative, 21% neutral, and 16% positive.
 
 <br>
 
@@ -27,7 +27,7 @@
 
 <br>
 
-### I made a text processing pipeline that did the following:
+### To be able to analyze and process the tweets I made a text cleaning pipeline that did the following:
 * Lowercased text
 * Removed puncuation
 * Removed numbers
@@ -35,11 +35,11 @@
 * Removed urls
 * Split text to a list of words
 * Removed stopwords
-* Lemmatized the text
-* Joined word list back to a string
+* Lemmatized the words
+* Joined list of words back to a string
 * Returned the cleaned text
 
-### So tweets like this:
+### So text like this:
 * 
 * 
 * 
