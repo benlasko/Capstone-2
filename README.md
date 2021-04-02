@@ -2,10 +2,10 @@
 ### Sentiment analysis can be used for a variety of purposes including assessing public sentiment about products or events, predicting social unrest, guiding policy making, and helping to decide how to best allocate resources.  So although the dataset I used for this project has about 14000 tweets about major airlines, each categorized as positive, negative, or neutral, my interest in doing this was to learn and practice using Natural Language Processing and predictive modeling for sentiment analysis to be able to apply it in a variety of different ways.  To do this I built functions to perform EDA, text analysis, text cleaning, predictive modeling, cross validation, and unsupervised learning techniques.
 
 
-###  I started by getting the data into a Pandas dataframe, replacing NaNs, removing duplicate rows, and shortening timeseries data to the day and into datetime objects, although I mainly used the tweets and their prelableled sentiments in my analysis.  Tweets were categorized as positive, negative, and neutral.  
+###  I started by getting the data into a Pandas dataframe, replacing NaNs, removing duplicate rows, and shortening timeseries data to the day and into datetime objects, although I mainly used the tweets and their prelabeled sentiments in my analysis.  Tweets were categorized as positive, negative, and neutral.  
 
 
-###  The tweets were mostly negative which was no surprise with Twitter.  The distribution of the tweets was about 60% negative, 25% neutral, and 15% positive.
+###  The tweets were mostly negative which was no surprise with Twitter.  The distribution of the tweets was about 63% negative, 21% neutral, and 16% positive.
 
 <br>
 
@@ -38,13 +38,13 @@
 * Joined word list back to a string
 * Returned the cleaned text
 
-### Before cleaning:
+### So tweets like this:
 * 
 * 
 * 
 
 
-### After cleaning:
+### Became:
 * 
 * 
 * 
@@ -68,7 +68,7 @@
  * Proportion of unique words: 0.14
 
 
-### I used some supervised learning classification models to try and find a good predictive model to categorize tweets into positive, negative, or neutral categories.
+### I used some supervised learning classification models to try and find a good predictive model to categorize tweets into their positive, negative, or neutral categories.
 
 * Naive Bayes
 * Decision Tree
@@ -86,7 +86,7 @@
 
 ### I increased the number of trees in the Random Forest model as high as 12000, and tried different max features and class weights but didn't get any scores higher than 77%.
 
-### For the Multi Layer Perceptron neural network I added up to 500 layers, experimented with alphas from .00001 to .05, used adaptive and inversely scaled learning rates, tried different solvers, batch sizes as low as 10, and tanh activation.  I wasn't able to tune the MLP model to get a score higher than about 77%.
+### For the Multi Layer Perceptron neural network I added up to 500 layers, experimented with alphas from .0001 to .05, used adaptive and invscaling learning rates, tried different solvers, relu and tanh activations, and batch sizes as low as 10.  I wasn't able to tune the MLP model to get a score higher than about 77%.
 
 ### By tuning the models to account for the imbalanced classes and making changes to my stopwords list I was able to raise the Multi Layer Perceptron neural network model accuracy about 7% from its original scores around 70% but other models performed relatively simliarly to running them with the default parameters.  SVM, Random Forest, and Multi Layer Perceptron models performed the best.
 
