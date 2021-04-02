@@ -107,7 +107,7 @@
 ![Some-Tuning](/images/some-tuning.png)
 
 
-### The model with the highest score, 77.46%, was the Support Vector Machines SVC(C=3) model.  Here's the confusion matrix for that model.I used stratifed KFold cross validation to test the model and the results were  .
+### The model with the highest score, 77.46%, was the Support Vector Machines SVC(C=3) model.  Ran out of time to run my confustion matrix and stratified KFold cross validation functions before this presentation.
 
 
 ### Finally, although the dataset had the tweets prelabeled, I wanted to try using unsupervised learning techniques to analyze the corpus.  I used a tfidf vectorizer to create a term frequency matrix of the entire corpus, used PCA to shrink the matrix from over 13000 features to 100 features, and used KMeans Clustering to form three clusters.
