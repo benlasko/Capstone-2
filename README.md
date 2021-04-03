@@ -90,7 +90,7 @@
 
 ### The model with the highest f1 score, 77.46%, was the Support Vector Machines SVC(C=3) model.  I ran out of time to run my functions to show the confusion matrix and stratified K-fold cross validation for that model before this presentation.
 
-### Finally, although the dataset had the tweets prelabeled, I wanted to try using unsupervised learning techniques to analyze the corpus.  I used a tfidf vectorizer to create a term frequency matrix of the entire corpus, used PCA to shrink the matrix from over 13000 features to 100 features, and used KMeans Clustering to form three clusters.
+### Finally, although the dataset had the tweets prelabeled, I wanted to try using unsupervised learning techniques to analyze the corpus.  I used a tfidf vectorizer to create a term frequency matrix of the entire corpus, used PCA to shrink the matrix from over 13,000 features to 100 features, and used KMeans Clustering to form three clusters.
 
 <br>
 
