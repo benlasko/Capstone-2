@@ -34,15 +34,14 @@
 
 ### So text like this:
 1. @USAirways 2 hours and counting waiting to get into a gate in Philadelphia. Just icing on the cake for a miserable flight experience 
-2. In his house at R'lyeh dead Cthulhu waits dreaming. 
+2. @VirginAmerica why are your first fares in May over three times more than other carriers when all seats are available to select???
 3. To be or not to be?
-4. @VirginAmerica why are your first fares in May over three times more than other carriers when all seats are available to select???
+
 
 ### Becomes:
 1. hour counting waiting get gate philadelphia icing cake miserable experience
-2. house rlyeh dead cthulhu wait dreaming 
+2. first fare may time carrier seat available select 
 3. ''
-4. first fare may time carrier seat available select 
 
 ### Line 3 is a good example of why natural language processing can be difficult.
 
