@@ -72,7 +72,7 @@
 
 <br>
 
-### I used supervised learning classification models to try and build a good predictive model to classify tweets into their positive, negative, or neutral categories.  Since tweets are short I used Scikit-learn's CountVectorizer instead of the tfidf vectorizer. 
+### I used supervised learning classification models to try and build a good predictive model to classify tweets into their positive, negative, or neutral categories.
 
 #### Models tested
 * Naive Bayes
