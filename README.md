@@ -74,7 +74,7 @@
 
 ### I used supervised learning classification models to try and build a good predictive model to classify tweets into their positive, negative, or neutral categories.
 
-#### Models tested
+#### Models tested:
 * Naive Bayes
 * Decision Tree
 * Random Forest
@@ -83,7 +83,7 @@
 
 ### By tuning the models and making changes to my stopwords list I was able to raise the MLPClassifier accuracy about 7% but other models performed relatively similarly to when they ran using the default parameters.  SVM, Random Forest, and MLP models performed better than the others I tried.
 
-#### Model scores after tuning.
+#### Model scores after some tuning:
 
 ![Some-Tuning](/images/some-tuning.png)
 
@@ -93,4 +93,4 @@
 
 <br>
 
-### I'd like to revisit this project in the future to better tune the supervised learning models, analyze the k-means clusters to create labels for each cluster, and use LDA for topic modeling.
+### I'd like to revisit this project in the future to better tune the supervised learning models and continue to experiment with unsupervised techniques starting with analyzing the k-means clusters and using LDA for topic modeling.
