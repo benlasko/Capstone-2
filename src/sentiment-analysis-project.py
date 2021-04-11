@@ -2,6 +2,9 @@
 Sentiment analysis on airline tweets.  
 Capstone 2 for the Galvanize Data Science Immersive.
 '''
+# import model-testing-functions
+# import nlp-functions
+# import eda-functions
 
 import pandas as pd
 import numpy as np
@@ -43,7 +46,15 @@ Data Wrangling and EDA
 
 def data_overview(df):
     '''
-    Get an overview of the data to start EDA.
+    Prints the following to get an overview of the data for starting EDA:
+        First five rows (.head())
+        Shape (.shape)
+        All columns (.columns)
+        Readout of how many non-null values and the dtype for each column (.info())
+        Numerical column stats (.describe())
+        Sum of unique value counts of each column
+        Total null values per column
+        Total duplicate rows
 
     Parameter
     ----------
@@ -52,16 +63,8 @@ def data_overview(df):
 
     Returns
     ----------
-        First five rows (.head())
-        Shape (.shape)
-        All columns (.columns)
-        Readout of how many non-null values and the dtype for each column (.info())
-        Numerical column stats (.describe())
-        Sum of unique value counts of each column
-        Number of duplicate rows
-        Total of null values per column
+       None
     '''
-
     print("\u0332".join("HEAD "))
     print(f'{df.head()} \n\n')
     print("\u0332".join("SHAPE "))
@@ -74,36 +77,25 @@ def data_overview(df):
     print(f'{df.nunique()} \n\n')
     print("\u0332".join("NUMERICAL COLUMN STATS "))
     print(f'{df.describe()}\n\n')
-    print('\u0332'.join("TOTAL NULL VALUES IN EACH COLUMN"))
+    print('\u0332'.join("TOTAL NULL VALUES IN EACH COLUMN "))
     print(f'{df.isnull().sum()} \n\n')
-    # print('\u0332'.join("TOTAL DUPLICATE ROWS"))
-    # print(f' { int(sum(df[df.duplicated()].sum()))} \n\n')
+    print('\u0332'.join("TOTAL DUPLICATE ROWS "))
+    print(f' {df.duplicated().sum()}')
 
-all_data = pd.read_csv('data/Tweets.csv')
-# all_data = pd.read_csv('data/Tweets.csv', encoding='ISO-8859-1')
+all_data = pd.read_csv('/Users/bn/Galvanize/Twitter-Sentiment-Analysis/data/Tweets.csv')
 
-# drop unwanted columns 
 df = all_data.drop(columns=['tweet_id','airline_sentiment_confidence', 'negativereason', 'negativereason_confidence', 'airline_sentiment_gold', 'negativereason_gold'])
 
-# check out the data
-# print(data_overview(df))
-
-# remove duplicate rows (there's over 100 duplicate rows)
 df.drop_duplicates(inplace=True)
 
-# rename columns
 df.columns = ['sent', 'airline', 'name', 'rts', 'tweet', 'coords', 'time', 'location', 'timezone']
-# print(df.columns)
 
-# make sentiments numerical
 df['sent'] = df['sent'].map({'positive':1, 'negative':-1, 'neutral':0})
 
-# single string of all tweet text
 corpus = ''
 for text in df.tweet:  
     corpus += ''.join(text) + ' '
 
-# list of words in all tweets
 list_words_raw_corpus = corpus.split()
 
 
@@ -119,7 +111,7 @@ add_stopwords = {'flight', 'virgin america', 'virginamerica', 'united', 'southwe
 StopWords = StopWords.union(add_stopwords)
 
 # text cleaning pipeline
-def lower(text):
+def lowercase_text(text):
     return text.lower()
 
 def remove_nums_and_punctuation(text):
@@ -129,11 +121,11 @@ def remove_nums_and_punctuation(text):
             text = text.replace(ch, '')
     return text
 
-def remove_newline(text):
+def remove_newlines(text):
     text.replace('\n', '')
     return text
 
-def remove_url(text):
+def remove_urls(text):
     return " ".join(re.sub("([^0-9A-Za-z \t])|(\w+:\/\/\S+)", "", text).split())
 
 def split_text_into_words(text):
@@ -142,30 +134,29 @@ def split_text_into_words(text):
 def remove_stopwords(word_lst):
     return [word for word in word_lst if word not in StopWords]
 
-def lemmatizer(word_lst):
+def lemmatize_word_list(word_lst):
     lemmatizer = WordNetLemmatizer()
     lemmatized = ' '.join([lemmatizer.lemmatize(w) for w in word_lst])
     return lemmatized
 
-def string_from_list(word_lst):
+def word_list_to_string(word_lst):
     return ''.join(word_lst)
 
 def text_cleaner(text, additional_stop_words=[]):
-    text_lc = lower(text)
+    text_lc = lowercase_text(text)
     text_np = remove_nums_and_punctuation(text_lc)
-    text_nnls = remove_newline(text_np)
-    text_nurl = remove_url(text_nnls)
+    text_nnls = remove_newlines(text_np)
+    text_nurl = remove_urls(text_nnls)
     words = split_text_into_words(text_nurl)
     words_nsw = remove_stopwords(words)
-    # words_nswa = remove_stopwords(words_nsw)
-    lemmatized = lemmatizer(words_nsw)
-    cleaned_text = string_from_list(lemmatized)
+    lemmatized = lemmatize_word_list(words_nsw)
+    cleaned_text = word_list_to_string(lemmatized)
     return cleaned_text
 
 cleaned_corpus = text_cleaner(corpus)
 
-# word cloud function
-def word_clouder(text, 
+
+def create_word_cloud(text, 
                 width=700, 
                 height=700, 
                 background_color='black', 
@@ -188,14 +179,17 @@ def word_clouder(text,
     Returns
     ----------
     Word cloud image.
-        
     '''
-    return WordCloud(width=800, height=800,
-                     background_color='black',
-                     min_font_size=12).generate(text)
+    return WordCloud(
+        width=width, 
+        height=height,
+        background_color=background_color,
+        min_font_size=min_font_size).generate(text)
 
-# create word cloud of cleaned corpus
-cleaned_corpus_wordcloud = word_clouder(cleaned_corpus)
+
+
+
+cleaned_corpus_wordcloud = create_word_cloud(cleaned_corpus)
 plt.figure(figsize = (8, 8), facecolor = None)
 plt.imshow(cleaned_corpus_wordcloud)
 plt.axis("off")
@@ -218,7 +212,7 @@ def common_words_graph(text, num_words=15, title='Most Common Words'):
 
     Returns
     ----------
-    Shows bar graph with counts of the most common words and saves PNG file of horizontal bar graph showing specified number of most common words in the passed in text string.
+    Horizontal bar graph with counts of the most common words. Saves PNG file of the graph graph showing specified number of most common words in the passed in text string.
     '''
     txt = text.split()
     sorted_word_counts = collections.Counter(txt)
@@ -235,8 +229,10 @@ def common_words_graph(text, num_words=15, title='Most Common Words'):
 
     ax.set_title(title)
     plt.legend(edgecolor='inherit')
-    plt.show()
+    # plt.show()
     # return plt.save('common words graph')
+
+
 
 # Lexical diversity
 # total words, total unique words, average repitition, proportion of unique words
@@ -263,7 +259,7 @@ def get_context(text, word, lines=10):
 
     Returns
     ----------
-    Specified number of lines showing the context of the specified word.
+    Specified number of lines each showing the context of the specified word.
     '''
     txt = nltk.Text(text.split())
     return txt.concordance(word, lines=lines)
@@ -324,14 +320,33 @@ X_test = cv.transform(X_test).toarray()
 models = [MLPClassifier(hidden_layer_sizes=500, activation='relu', solver='adam', alpha=.05, batch_size=10, learning_rate='adaptive'), RandomForestClassifier(n_estimators=12000, max_features=3), SVC(C=6, class_weight='balanced')]
 
 # score list of models, return accuracy and f1 scores for each model
-def score_class_models(models=models):
+def score_class_models(models, X_train, y_train, X_test, y_test):
+    '''
+    Tests a list of predictive models and returns accuracy and f1 scores for each model.
+
+    Parameter
+    ----------
+    models:  list 
+        A list of models to test.
+    X_train:  arr
+        X_train data.
+    y_train:  arr
+        y_train data.
+    X_test:  arr
+        X_test data.
+    y_test:  arr
+        y_test data.
+        
+    Returns
+    ----------
+    Accuracy and f1 scores for each model in the list of models passed in.
+    '''
     acc_score_list = []
     f1_score_list = []
 
     for model in models:   
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
-
         acc_score_list.append(model.score(X_test, y_test))
         f1_score_list.append(f1_score(y_test, y_pred, average='weighted'))
         
@@ -411,11 +426,6 @@ Unsupervised Learning.  This code is currently incomplete.
 # plt.scatter(filtered_label2[:,0] , filtered_label2[:,1] , color = 'red')
 # plt.scatter(filtered_label3[:,0] , filtered_label3[:,1] , color = 'black')
 # plt.show()
-
-
-
-
-
 
 
 

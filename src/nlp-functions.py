@@ -1,0 +1,188 @@
+from wordcloud import WordCloud, STOPWORDS
+import nltk.corpus
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from nltk.text import Text
+import collections
+
+def lowercase_text(text):
+    return text.lower()
+
+def remove_nums_and_punctuation(text):
+    punc = '!()-[]{};:\\,<>./?@#$%^&*_~;1234567890'
+    for ch in text:
+        if ch in punc:
+            text = text.replace(ch, '')
+    return text
+
+def remove_newlines(text):
+    text.replace('\n', '')
+    return text
+
+def remove_urls(text):
+    return " ".join(re.sub("([^0-9A-Za-z \t])|(\w+:\/\/\S+)", "", text).split())
+
+def split_text_into_words(text):
+    return text.split(' ')
+
+def remove_stopwords(word_lst):
+    return [word for word in word_lst if word not in StopWords]
+
+def lemmatize_word_list(word_lst):
+    lemmatizer = WordNetLemmatizer()
+    lemmatized = ' '.join([lemmatizer.lemmatize(w) for w in word_lst])
+    return lemmatized
+
+def word_list_to_string(word_lst):
+    return ''.join(word_lst)
+
+def text_cleaner(text):
+    '''
+    A text cleaning pipeline combining the above functions to clean a string of text by lowercasing, removing numbers/puncuation/urls and new lines, lemmatizing.
+
+    Parameters
+    ----------
+    text:  str 
+        The text to be cleaned.
+    
+    Returns
+    ----------
+    String of .
+    '''
+    text_lc = lowercase_text(text)
+    text_np = remove_nums_and_punctuation(text_lc)
+    text_nnls = remove_newlines(text_np)
+    text_nurl = remove_urls(text_nnls)
+    words = split_text_into_words(text_nurl)
+    words_nsw = remove_stopwords(words)
+    lemmatized = lemmatize_word_list(words_nsw)
+    cleaned_text = word_list_to_string(lemmatized)
+    return cleaned_text
+
+
+def custom_stopwords(stop_words, additional_stopwords):
+     '''
+    Creates a new stopwords set with additional stopwords added to the original stopwords.
+
+    Parameters
+    ----------
+    stop_words:  set 
+        Original set of stopwords to add new words to.
+    additional_stopwords:  set or list
+        New stopwords to add to the original stopwords.
+    
+    Returns
+    ----------
+    A new stopwords set with all original and additional stopwords.
+    '''
+    add_stopwords = set(additional_stopwords)
+    StopWords = stop_words.union(add_stopwords)
+    return set(StopWords)
+
+
+def create_word_cloud(text, 
+                width=700, 
+                height=700, 
+                background_color='black', 
+                min_font_size=12
+                ):
+    '''
+    Generates word cloud of text.
+
+    Parameter
+    ----------
+    text:  str 
+        A string of words to create the word cloud from.
+    width:  int 
+        Width in pixels of word cloud image.  default = 700
+    height:  int 
+        Height in pixels of word cloud image.  default = 700
+    background_color:  str
+        Color of background of word cloud image.  default = "black"
+    min_font_size:  int
+        Minimum font size of words.  default = 12
+
+    Returns
+    ----------
+    Word cloud object.
+    '''
+    return WordCloud(width=width, 
+                    height=height,
+                    background_color=background_color,
+                    min_font_size=min_font_size).generate(text)
+
+
+def common_words_graph(text, num_words=15, title='Most Common Words'):
+    '''
+    Shows horizontal bar graph of most common words in text with their counts in descending order.  Saves the graph as a png file.
+
+    Parameter
+    ----------
+    text:  str 
+        Text to find most common words in.
+    num_words:  int
+        Number of most common words to graph.  default = 15
+    title:  str
+        Title of graph. default = "Most Common Words"
+
+    Returns
+    ----------
+    None.
+    '''
+    txt = text.split()
+    sorted_word_counts = collections.Counter(txt)
+    sorted_word_counts.most_common(num_words)
+    most_common_words = sorted_word_counts.most_common(num_words)
+    word_count_df = pd.DataFrame(most_common_words,columns=['Words', 'Count'])
+
+    fig, ax = plt.subplots(figsize=(8, 8))
+    word_count_df.sort_values(by='Count').plot.barh(x='Words',
+                                                    y='Count',
+                                                    ax=ax,
+                                                    color='deepskyblue',
+                                                    edgecolor='k')
+    ax.set_title(title)
+    plt.legend(edgecolor='inherit')
+    plt.show()
+    plt.save('common words graph')
+
+
+def lexical_diversity(text):
+    '''
+    Prints total words, total unique words, average word repetition, and proportion of unique words for the text passed in.
+
+    Parameter
+    ----------
+    text:  str 
+        Text to analayze.
+
+    Returns
+    ----------
+    None.
+    '''
+    txt = text.split()
+    print(f'Total words: {len(txt)}')
+    print(f'Total unique words: {len(set(txt))}')
+    print(f'Average word repetition: {round(len(text)/len(set(text)), 2)}')
+    print(f'Proportion of unique words: {round(len(set(txt)) / len(txt), 2)}')
+
+
+def get_word_context(text, word, lines=10):
+    '''
+    See examples of the context in which a word is found in the text passed in.
+
+    Parameter
+    ----------
+    text:  str 
+        Text to find the context of words in.
+    word:  str
+        Word to see the context for.
+    lines:  int
+        Number of lines to return.  default = 10
+
+    Returns
+    ----------
+    Specified number of lines each showing the context of the specified word.
+    '''
+    txt = nltk.Text(text.split())
+    return txt.concordance(word, lines=lines)
