@@ -1,12 +1,10 @@
 # **Sentiment Analysis on Tweets**
 ## Capstone 2 for the Galvanize Data Science Immersive
-___
 
-<br>
 <br>
 
 ## Technologies Used
-___
+
 * Python 
 * Numpy
 * Pandas
@@ -18,13 +16,11 @@ ___
 <br>
 
 ## Introduction
-___
+
 ### Natural language processing is a profound tool with the power to help us understand our collective history, culture, and state of mind.  One way to apply it is conducting sentiment analysis which can be used for a variety of purposes including assessing public sentiment about products, events, or ideas, predicting social unrest, informing education and policy, and helping decide how to allocate resources.  So although the dataset I used for this project was a collection of tweets about airlines my interest in doing this was to learn and practice using natural language processing and predictive modeling for sentiment analysis to be able to apply these techniques in a variety of different ways.  To do this I wrote code and built functions to perform EDA, text cleaning, text analysis, predictive modeling, cross validation, and supervised/unsupervised learning techniques.
 
-<br>
-
 ## Summary
-___
+
 ###  The dataset I used had a collection of about 14,000 tweets from February of 2015 about six major airlines.  The tweets were prelabeled by sentiment.  I started by putting the data into a Pandas dataframe, replacing NaNs, removing duplicate rows, and shortening timeseries data to the day and converting it to datetime objects, although I mainly used the tweets and their prelabeled sentiments in my analysis.  
 ### I conducted EDA and plotted the distribution of all sentiment counts and the distribution of sentiment counts by airline.  Then I created a word cloud to visualize the most common words in the corpus of tweets.  After that I used natural language processing techniques to analyze the tweets.  The tweets were cleaned using a text cleaning pipeline I built.  I show some examples of the original vs cleaned tweets and some information about the lexical diversity of the corpus.  Then I created a second word cloud to show the most common words found in the cleaned corpus.  Following that I printed out some examples of the context in which two of the most common words in the corpus were found.
 ### After cleaning the text I tested five supervised learning models to classify the tweets by sentiment.  You'll see the scores I was able to get with my models after a little tuning.  I wanted to try an unsupervised learning approach to analyze the data also so I used a tfidf vectorizer, K-means clustering, and PCA to begin that process.
@@ -32,7 +28,7 @@ ___
 <br>
 
 ## Exploratory Data Analysis
-____
+
 
 ###  The tweets were classified into positive, negative, and neutral sentiments. The distribution was 63% negative, 21% neutral, and 16% positive.
 
@@ -52,7 +48,7 @@ ____
 
 
 ## Natural Language Processing
-____
+
 ### To be able to analyze and process the tweets I made a text cleaning pipeline that does the following:
 * Lowercases text
 * Removes puncuation
@@ -106,7 +102,7 @@ ____
 <br>
 
 ## Supervised Learning Classification Models
-____
+
 
 ### I used supervised learning classification models to try and build a good predictive model to classify tweets into their positive, negative, or neutral categories.
 
@@ -128,7 +124,6 @@ ____
 <br>
 
 ## Unsupervised Learning Techniques
-____
 
 ### Finally, although the dataset had the tweets prelabeled, I wanted to try using unsupervised learning techniques to analyze the corpus.  I used a tfidf vectorizer to create a term frequency matrix of the entire corpus, used PCA to shrink the matrix from over 13,000 features to 100 features, and used k-means clustering to form three clusters.
 
