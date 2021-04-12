@@ -6,6 +6,7 @@ Capstone 2 for the Galvanize Data Science Immersive.
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 from wordcloud import WordCloud, STOPWORDS
 import nltk.corpus
@@ -443,6 +444,17 @@ df['sent'] = df['sent'].map({'positive':1, 'negative':-1, 'neutral':0})
 corpus = ''
 for text in df.tweet:  
     corpus += ''.join(text) + ' '
+
+
+ax = df.groupby(['airline','sent'])['sent'].count().unstack(0).plot.bar(figsize=(10,10), edgecolor='k')
+ax.set_title('Sentiment Counts for each Airline', size=20)
+ax.set_xlabel('Sentiment')
+ax.set_ylabel('Counts')
+ticks = [0,1,2]
+labels = ['Positive', 'Neutral', 'Negative']
+plt.legend(edgecolor = 'k')
+plt.xticks(ticks, labels, rotation=0)
+plt.savefig('Sentiment Counts by Airline')
 
 
 StopWords = set(stopwords.words('english'))
