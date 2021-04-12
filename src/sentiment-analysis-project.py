@@ -239,6 +239,9 @@ def text_cleaner(text, stop_words):
     ----------
     text:  str 
         The text to be cleaned.
+
+    stop_words set
+        Set of stopwords to remove from text.
     
     Returns
     ----------
@@ -370,7 +373,7 @@ Supervised Learning Classification
 
 def score_class_models(models, X_train, y_train, X_test, y_test):
     '''
-    Tests a list of predictive models and returns accuracy and f1 scores for each model.
+    Fits and scores a list of predictive models and returns accuracy and f1 scores for each model.
 
     Parameter
     ----------
@@ -461,6 +464,7 @@ ticks = [0,1,2]
 labels = ['Positive', 'Neutral', 'Negative']
 plt.legend(edgecolor = 'k')
 plt.xticks(ticks, labels, rotation=0)
+plt.show()
 plt.savefig('Sentiment Counts by Airline')
 
 
@@ -471,14 +475,13 @@ add_stopwords = {'flight', 'virgin america', 'virginamerica', 'united', 'southwe
 StopWords = custom_stopwords(StopWords, add_stopwords)
 
 
-
 corpus_wordcloud = create_word_cloud(corpus)
 plt.figure(figsize = (8, 8), facecolor = None)
 plt.imshow(corpus_wordcloud)
 plt.axis("off")
 plt.tight_layout(pad = 1)
 plt.show()
-plt.savefig('corpus-word-cloud')
+# plt.savefig('corpus-word-cloud')
 
 cleaned_corpus = text_cleaner(corpus, StopWords)
 cleaned_corpus_wordcloud = create_word_cloud(cleaned_corpus)
@@ -487,7 +490,7 @@ plt.imshow(cleaned_corpus_wordcloud)
 plt.axis("off")
 plt.tight_layout(pad = 1)
 plt.show()
-plt.savefig('cleaned-corpus-word-cloud')
+# plt.savefig('cleaned-corpus-word-cloud')
 
 print(common_words_graph(cleaned_corpus))
 
@@ -497,7 +500,7 @@ print(get_word_context(cleaned_corpus, 'service', lines=10))
 
 
 cv = CountVectorizer(stop_words='english')
-# tv = TfidfVectorizer()
+tv = TfidfVectorizer()
 
 df['tweet'] = df['tweet'].apply(text_cleaner(stop_words=StopWords))
 
@@ -521,14 +524,14 @@ print(score_class_models(tuned_models, X_train, y_train, X_test, y_test))
 print(conf_matrix(SVC(C=3)))
 
 
-# tv = TfidfVectorizer()
-# corpus_tfm = tv.fit_transform(df.tweet)
+tv = TfidfVectorizer()
+corpus_tfm = tv.fit_transform(df.tweet)
 
-# pca = TruncatedSVD(100)
-# truncated_corpus_tfm = pca.fit_transform(corpus_tfm)
+pca = TruncatedSVD(100)
+truncated_corpus_tfm = pca.fit_transform(corpus_tfm)
 
-# kmeans = KMeans(n_clusters=3, n_jobs=-1)
-# kmeans.fit(truncated_corpus_tfm)
+kmeans = KMeans(n_clusters=3, n_jobs=-1)
+kmeans.fit(truncated_corpus_tfm)
 
 # label = kmeans.fit_predict(truncated_corpus_tfm)
 

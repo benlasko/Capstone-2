@@ -130,4 +130,4 @@
 
 ## Future Improvements
 
-#### I'd like to revisit this project in the future to better tune the supervised learning models, try some sentiment analysis packages like Vader and Textblob, and continue to explore unsupervised learning techniques starting with analyzing the k-means clusters and using LDA for topic modeling.
+#### I'd like to revisit this project in the future to better tune the supervised learning models using gridsearch and other methods, try some sentiment analysis packages like Vader and Textblob, and continue to explore unsupervised learning techniques starting with analyzing the k-means clusters and using LDA for topic modeling.

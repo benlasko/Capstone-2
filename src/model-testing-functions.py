@@ -1,3 +1,7 @@
+
+import numpy as np
+import matplotlib.pyplot as plt
+
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
@@ -17,7 +21,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import f1_score
 from sklearn.model_selection import StratifiedKFold
-
+from sklearn.metrics import plot_confusion_matrix
 
 def score_class_models(models, X_train, y_train, X_test, y_test):
     '''
