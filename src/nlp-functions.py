@@ -5,60 +5,6 @@ from nltk.stem import WordNetLemmatizer
 from nltk.text import Text
 import collections
 
-def lowercase_text(text):
-    return text.lower()
-
-def remove_nums_and_punctuation(text):
-    punc = '!()-[]{};:\\,<>./?@#$%^&*_~;1234567890'
-    for ch in text:
-        if ch in punc:
-            text = text.replace(ch, '')
-    return text
-
-def remove_newlines(text):
-    text.replace('\n', '')
-    return text
-
-def remove_urls(text):
-    return " ".join(re.sub("([^0-9A-Za-z \t])|(\w+:\/\/\S+)", "", text).split())
-
-def split_text_into_words(text):
-    return text.split(' ')
-
-def remove_stopwords(word_lst):
-    return [word for word in word_lst if word not in StopWords]
-
-def lemmatize_word_list(word_lst):
-    lemmatizer = WordNetLemmatizer()
-    lemmatized = ' '.join([lemmatizer.lemmatize(w) for w in word_lst])
-    return lemmatized
-
-def word_list_to_string(word_lst):
-    return ''.join(word_lst)
-
-def text_cleaner(text):
-    '''
-    A text cleaning pipeline combining the above functions to clean a string of text by lowercasing, removing numbers/puncuation/urls and new lines, lemmatizing.
-
-    Parameters
-    ----------
-    text:  str 
-        The text to be cleaned.
-    
-    Returns
-    ----------
-    String of .
-    '''
-    text_lc = lowercase_text(text)
-    text_np = remove_nums_and_punctuation(text_lc)
-    text_nnls = remove_newlines(text_np)
-    text_nurl = remove_urls(text_nnls)
-    words = split_text_into_words(text_nurl)
-    words_nsw = remove_stopwords(words)
-    lemmatized = lemmatize_word_list(words_nsw)
-    cleaned_text = word_list_to_string(lemmatized)
-    return cleaned_text
-
 
 def custom_stopwords(stop_words, additional_stopwords):
      '''
@@ -78,6 +24,159 @@ def custom_stopwords(stop_words, additional_stopwords):
     add_stopwords = set(additional_stopwords)
     StopWords = stop_words.union(add_stopwords)
     return set(StopWords)
+
+
+def lowercase_text(text):
+    '''
+    Lowercases text.
+
+    Parameter
+    ----------
+    text: str
+        Text to lowercase.
+    
+    Returns
+    ----------
+    Lowercased text.
+    '''
+    return text.lower()
+
+def remove_nums_and_punctuation(text):
+    '''
+    Removes numbers and puncuation from text.
+
+    Parameter
+    ----------
+    text: str
+        Text to remove numbers and puncuation from.
+    
+    Returns
+    ----------
+    Text with numbers and puncuation removed.
+    '''
+    punc = '!()-[]{};:\\,<>./?@#$%^&*_~;1234567890'
+    for ch in text:
+        if ch in punc:
+            text = text.replace(ch, '')
+    return text
+
+def remove_newlines(text):
+    '''
+    Removes new lines from text.
+
+    Parameter
+    ----------
+    text: str
+        Text to remove new lines from.
+    
+    Returns
+    ----------
+    Text with new lines removed.
+    '''
+    text.replace('\n', '')
+    return text
+
+def remove_urls(text):
+    '''
+    Removes URLs from text.
+
+    Parameter
+    ----------
+    text: str
+        Text to remove URLs from.
+    
+    Returns
+    ----------
+    Text with URLs removed.
+    '''
+    return " ".join(re.sub("([^0-9A-Za-z \t])|(\w+:\/\/\S+)", "", text).split())
+
+def split_text_into_words(text):
+    '''
+    Splits text into a list of words.
+
+    Parameter
+    ----------
+    text: str
+        Text to create list of words from.
+    
+    Returns
+    ----------
+    List of words from the text.
+    '''
+    return text.split(' ')
+
+def remove_stopwords(word_lst, stop_words):
+    '''
+    Removes stopwords from text.
+
+    Parameters
+    ----------
+    word_lst: list
+        List of words from which to remove stopwords.
+    stop_words: set or list
+        Stopwords to remove from the list of words.
+    
+    Returns
+    ----------
+    List of words with stopwords removed.
+    '''
+    return [word for word in word_lst if word not in stop_words]
+
+def lemmatize_word_list(word_lst):
+    '''
+    Lemmatizes a list of words.
+
+    Parameter
+    ----------
+    word_lst: list
+        List of words to lemmatize.
+    
+    Returns
+    ----------
+    List of words to lemmatize.
+    '''
+    lemmatizer = WordNetLemmatizer()
+    lemmatized = ' '.join([lemmatizer.lemmatize(w) for w in word_lst])
+    return lemmatized
+
+def word_list_to_string(word_lst):
+    '''
+    Creates a string with all words from a list of words.
+
+    Parameter
+    ----------
+    word_lst: list
+        List of words to join into a string.
+    
+    Returns
+    ----------
+    String of the words in the word list passed in.
+    '''
+    return ''.join(word_lst)
+
+def text_cleaner(text):
+    '''
+    A text cleaning pipeline combining the above functions to clean a string of text by lowercasing, removing numbers/puncuation/urls and new lines, lemmatizing.
+
+    Parameters
+    ----------
+    text:  str 
+        The text to be cleaned.
+    
+    Returns
+    ----------
+    String of the cleaned text.
+    '''
+    text_lc = lowercase_text(text)
+    text_np = remove_nums_and_punctuation(text_lc)
+    text_nnls = remove_newlines(text_np)
+    text_nurl = remove_urls(text_nnls)
+    words = split_text_into_words(text_nurl)
+    words_nsw = remove_stopwords(words)
+    lemmatized = lemmatize_word_list(words_nsw)
+    cleaned_text = word_list_to_string(lemmatized)
+    return cleaned_text
 
 
 def create_word_cloud(text, 

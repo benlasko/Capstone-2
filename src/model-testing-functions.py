@@ -18,17 +18,6 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import f1_score
 from sklearn.model_selection import StratifiedKFold
 
-def apply_vectorizer(text, vectorizer=CountVectorizer):
-
-    vectorizer = vectorizer
-    words = text.split()
-
-    vecced_text = vectorizer.fit_transform(words)
-    return vecced_text
-
-X_train = cv.fit_transform(X_train).toarray()
-X_test = cv.transform(X_test).toarray()
-
 
 def score_class_models(models, X_train, y_train, X_test, y_test):
     '''
@@ -86,3 +75,47 @@ def conf_matrix(model, X_train, y_train):
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
     return confusion_matrix(y_test, y_pred)
+
+
+def stratified_k_fold(model, X_train, y_train, X_test, y_test, n_folds=5):
+    '''
+    Performs stratified K-fold cross validation and returns mean of scores and best score.
+
+    Parameters
+    ----------
+    model: 
+        Model to test.
+    X_train:  arr
+        X_train data.
+    y_train:  arr
+        y_train data.
+    X_test:  arr
+        X_test data.
+    y_test:  arr
+        y_test data.
+
+    Returns
+    ----------
+    Mean of scores.  Score of the best model.
+    '''
+
+    skf = StratifiedKFold(n_splits=n_folds)
+    scores = []
+    models = []
+    
+    for train_index, test_index in skf.split(X_train, y_train):
+        X_t = X_train[train_index]
+        X_v = X_train[test_index]
+        y_t = y_train[train_index]
+        y_v = y_train[test_index]
+
+        model.fit(X_t, y_t)
+        models.append(model)
+        scores.append(model.score(X_v, y_v))
+
+    scores = np.array(scores)
+    scores_mean = scores.mean()
+    best_model = models[np.argmax(scores)]
+    val_score = best_model.score(X_test, y_test)
+
+    return f'scores mean: {scores_mean} \n val score: {val_score}'
