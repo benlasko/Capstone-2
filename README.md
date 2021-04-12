@@ -54,7 +54,7 @@
 * Removes puncuation
 * Removes numbers
 * Removes new lines
-* Removes urls
+* Removes URLs
 * Splits text to a list of words
 * Removes stopwords
 * Lemmatizes the words
@@ -123,10 +123,10 @@
 
 ## Unsupervised Learning Techniques
 
-#### Finally, although the dataset had the tweets prelabeled, I wanted to try using unsupervised learning techniques to analyze the corpus.  I used a tfidf vectorizer to create a term frequency matrix of the entire corpus, used PCA to shrink the matrix from over 13,000 features to 100 features, and used k-means clustering to form three clusters.
+#### Although the dataset had the tweets prelabeled I wanted to try using unsupervised learning techniques to analyze the corpus.  I used a TF-IDF vectorizer to create a term frequency matrix of the entire corpus, used PCA to shrink the matrix from over 13,000 features to 100 features, and used k-means clustering to form three clusters.
 
 <br>
 
 ## Future Improvements
 
-### I'd like to revisit this project in the future to better tune the supervised learning models and continue to experiment with unsupervised techniques starting with analyzing the k-means clusters and using LDA for topic modeling.
+#### I'd like to revisit this project in the future to better tune the supervised learning models and continue to experiment with unsupervised techniques starting with analyzing the k-means clusters and using LDA for topic modeling.
