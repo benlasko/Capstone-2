@@ -9,6 +9,7 @@
 * NumPy
 * Pandas
 * Matplotlib
+* Seaborn
 * Jupyter
 * Scikit-Learn
 * Natural Language Tookit - NLTK

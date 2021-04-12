@@ -441,6 +441,13 @@ df.columns = ['sent', 'airline', 'name', 'rts', 'tweet', 'coords', 'time', 'loca
 
 df['sent'] = df['sent'].map({'positive':1, 'negative':-1, 'neutral':0})
 
+df['time'] = df['time'].str.slice(0,16)
+df['time'] = pd.to_datetime(df['time'])
+
+df['location'] = df['location'].fillna(df['location'].mode()[0])
+df['coords'] = df['coords'].fillna(df['coords'].mode()[0])
+df['timezone'] = df['timezone'].fillna(df['timezone'].mode()[0])
+
 corpus = ''
 for text in df.tweet:  
     corpus += ''.join(text) + ' '
