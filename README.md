@@ -4,7 +4,6 @@
 <br>
 
 ## Technologies Used
-
 * Python 
 * NumPy
 * Pandas
