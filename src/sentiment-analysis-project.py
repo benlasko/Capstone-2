@@ -470,8 +470,8 @@ if __name__ == '__main__':
     labels = ['Positive', 'Neutral', 'Negative']
     plt.legend(edgecolor = 'k')
     plt.xticks(ticks, labels, rotation=0)
-    # plt.show()
-    # plt.savefig('Sentiment Counts by Airline')
+    plt.show()
+    plt.savefig('Sentiment Counts by Airline')
 
 
     corpus_wordcloud = create_word_cloud(corpus)
@@ -479,8 +479,8 @@ if __name__ == '__main__':
     plt.imshow(corpus_wordcloud)
     plt.axis("off")
     plt.tight_layout(pad = 1)
-    # plt.show()
-    # plt.savefig('corpus-word-cloud')
+    plt.show()
+    plt.savefig('corpus-word-cloud')
 
     cleaned_corpus = text_cleaner(corpus, StopWords)
     cleaned_corpus_wordcloud = create_word_cloud(cleaned_corpus)
@@ -488,17 +488,14 @@ if __name__ == '__main__':
     plt.imshow(cleaned_corpus_wordcloud)
     plt.axis("off")
     plt.tight_layout(pad = 1)
-    # plt.show()
-    # plt.savefig('cleaned-corpus-word-cloud')
+    plt.show()
+    plt.savefig('cleaned-corpus-word-cloud')
 
-    # print(common_words_graph(cleaned_corpus))
+    print(common_words_graph(cleaned_corpus))
 
-    # print(get_word_context(cleaned_corpus, 'thank', lines=10))
+    print(get_word_context(cleaned_corpus, 'thank', lines=10))
 
-    # print(get_word_context(cleaned_corpus, 'service', lines=10))
-
-
-
+    print(get_word_context(cleaned_corpus, 'service', lines=10))
 
 
     def text_cleaner_custom(text, stop_words=StopWords):
@@ -545,20 +542,20 @@ if __name__ == '__main__':
 
     tuned_models = [MLPClassifier(hidden_layer_sizes=500, activation='relu', solver='adam', alpha=.05, batch_size=10, learning_rate='adaptive'), RandomForestClassifier(n_estimators=12000, max_features=3), SVC(C=6, class_weight='balanced')]
 
-    # print(score_class_models(untuned_models, X_train, y_train, X_test, y_test))
+    print(score_class_models(untuned_models, X_train, y_train, X_test, y_test))
 
-    # print(score_class_models(tuned_models, X_train, y_train, X_test, y_test))
+    print(score_class_models(tuned_models, X_train, y_train, X_test, y_test))
 
-    # print(conf_matrix(SVC(C=3)))
+    print(conf_matrix(SVC(C=3)))
 
 
-    # corpus_tfm = tv.fit_transform(df.tweet)
+    corpus_tfm = tv.fit_transform(df.tweet)
 
-    # pca = TruncatedSVD(100)
-    # truncated_corpus_tfm = pca.fit_transform(corpus_tfm)
+    pca = TruncatedSVD(100)
+    truncated_corpus_tfm = pca.fit_transform(corpus_tfm)
 
-    # kmeans = KMeans(n_clusters=3, n_jobs=-1)
-    # kmeans.fit(truncated_corpus_tfm)
+    kmeans = KMeans(n_clusters=3, n_jobs=-1)
+    kmeans.fit(truncated_corpus_tfm)
 
     # label = kmeans.fit_predict(truncated_corpus_tfm)
 
