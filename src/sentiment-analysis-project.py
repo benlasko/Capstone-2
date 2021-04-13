@@ -231,6 +231,7 @@ def word_list_to_string(word_lst):
     '''
     return ''.join(word_lst)
 
+
 def text_cleaner(text, stop_words):
     '''
     A text cleaning pipeline combining the above functions to clean a string of text by lowercasing, removing numbers/puncuation/urls and new lines, lemmatizing.
@@ -455,6 +456,11 @@ if __name__ == '__main__':
     for text in df.tweet:  
         corpus += ''.join(text) + ' '
 
+    StopWords = set(stopwords.words('english'))
+
+    add_stopwords = {'flight', 'virgin america', 'virginamerica', 'united', 'southwest', 'southwestair', 'delta', 'us airways', 'usairways', 'american', 'americanair', 'aa', 'jet blue', 'jetblue', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'twenty four', '@virginamerica', '@united', '@southwest', '@delta', '@usairways', '@americanair', '@jetblue', '@delta', 'amp'}
+
+    StopWords = custom_stopwords(StopWords, add_stopwords)
 
     ax = df.groupby(['airline','sent'])['sent'].count().unstack(0).plot.bar(figsize=(10,10), edgecolor='k')
     ax.set_title('Sentiment Counts for each Airline', size=20)
@@ -464,15 +470,8 @@ if __name__ == '__main__':
     labels = ['Positive', 'Neutral', 'Negative']
     plt.legend(edgecolor = 'k')
     plt.xticks(ticks, labels, rotation=0)
-    # plt.show()
-    # plt.savefig('Sentiment Counts by Airline')
-
-
-    StopWords = set(stopwords.words('english'))
-
-    add_stopwords = {'flight', 'virgin america', 'virginamerica', 'united', 'southwest', 'southwestair', 'delta', 'us airways', 'usairways', 'american', 'americanair', 'aa', 'jet blue', 'jetblue', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'twenty four', '@virginamerica', '@united', '@southwest', '@delta', '@usairways', '@americanair', '@jetblue', '@delta', 'amp'}
-
-    StopWords = custom_stopwords(StopWords, add_stopwords)
+    plt.show()
+    plt.savefig('Sentiment Counts by Airline')
 
 
     corpus_wordcloud = create_word_cloud(corpus)
@@ -480,8 +479,8 @@ if __name__ == '__main__':
     plt.imshow(corpus_wordcloud)
     plt.axis("off")
     plt.tight_layout(pad = 1)
-    # plt.show()
-    # plt.savefig('corpus-word-cloud')
+    plt.show()
+    plt.savefig('corpus-word-cloud')
 
     cleaned_corpus = text_cleaner(corpus, StopWords)
     cleaned_corpus_wordcloud = create_word_cloud(cleaned_corpus)
@@ -489,20 +488,47 @@ if __name__ == '__main__':
     plt.imshow(cleaned_corpus_wordcloud)
     plt.axis("off")
     plt.tight_layout(pad = 1)
-    # plt.show()
-    # plt.savefig('cleaned-corpus-word-cloud')
+    plt.show()
+    plt.savefig('cleaned-corpus-word-cloud')
 
-    # print(common_words_graph(cleaned_corpus))
+    print(common_words_graph(cleaned_corpus))
 
-    # print(get_word_context(cleaned_corpus, 'thank', lines=10))
+    print(get_word_context(cleaned_corpus, 'thank', lines=10))
 
-    # print(get_word_context(cleaned_corpus, 'service', lines=10))
+    print(get_word_context(cleaned_corpus, 'service', lines=10))
 
 
     cv = CountVectorizer(stop_words='english')
     tv = TfidfVectorizer()
 
-    df['tweet'] = df['tweet'].apply(text_cleaner(stop_words=StopWords))
+
+    def text_cleaner_custom(text, stop_words=StopWords):
+        '''
+        A text cleaning pipeline combining the above functions to clean a string of text by lowercasing, removing numbers/puncuation/urls and new lines, lemmatizing.
+
+        Parameters
+        ----------
+        text:  str 
+            The text to be cleaned.
+
+        stop_words set
+            Set of stopwords to remove from text.
+        
+        Returns
+        ----------
+        String of the cleaned text.
+        '''
+        text_lc = lowercase_text(text)
+        text_np = remove_nums_and_punctuation(text_lc)
+        text_nnls = remove_newlines(text_np)
+        text_nurl = remove_urls(text_nnls)
+        words = split_text_into_words(text_nurl)
+        words_nsw = remove_stopwords(words, stop_words)
+        lemmatized = lemmatize_word_list(words_nsw)
+        cleaned_text = word_list_to_string(lemmatized)
+        return cleaned_text
+
+    df['tweet'] = df['tweet'].apply(text_cleaner_custom)
 
     X = df.tweet
     y = df.sent
@@ -517,21 +543,21 @@ if __name__ == '__main__':
 
     tuned_models = [MLPClassifier(hidden_layer_sizes=500, activation='relu', solver='adam', alpha=.05, batch_size=10, learning_rate='adaptive'), RandomForestClassifier(n_estimators=12000, max_features=3), SVC(C=6, class_weight='balanced')]
 
-    # print(score_class_models(untuned_models, X_train, y_train, X_test, y_test))
+    print(score_class_models(untuned_models, X_train, y_train, X_test, y_test))
 
-    # print(score_class_models(tuned_models, X_train, y_train, X_test, y_test))
+    print(score_class_models(tuned_models, X_train, y_train, X_test, y_test))
 
-    # print(conf_matrix(SVC(C=3)))
+    print(conf_matrix(SVC(C=3)))
 
 
-    # tv = TfidfVectorizer()
-    # corpus_tfm = tv.fit_transform(df.tweet)
+    tv = TfidfVectorizer()
+    corpus_tfm = tv.fit_transform(df.tweet)
 
-    # pca = TruncatedSVD(100)
-    # truncated_corpus_tfm = pca.fit_transform(corpus_tfm)
+    pca = TruncatedSVD(100)
+    truncated_corpus_tfm = pca.fit_transform(corpus_tfm)
 
-    # kmeans = KMeans(n_clusters=3, n_jobs=-1)
-    # kmeans.fit(truncated_corpus_tfm)
+    kmeans = KMeans(n_clusters=3, n_jobs=-1)
+    kmeans.fit(truncated_corpus_tfm)
 
     # label = kmeans.fit_predict(truncated_corpus_tfm)
 
