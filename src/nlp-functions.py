@@ -1,13 +1,24 @@
+import pandas as pd
+import matplotlib.pyplot as plt
 from wordcloud import WordCloud, STOPWORDS
 import nltk.corpus
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.text import Text
 import collections
-
+from wordcloud import WordCloud, STOPWORDS
+import nltk.corpus
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from nltk.text import Text
+import itertools
+import re
+import collections
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 def custom_stopwords(stop_words, additional_stopwords):
-     '''
+    '''
     Creates a new stopwords set with additional stopwords added to the original stopwords.
 
     Parameters
@@ -91,7 +102,24 @@ def remove_urls(text):
     '''
     return " ".join(re.sub("([^0-9A-Za-z \t])|(\w+:\/\/\S+)", "", text).split())
 
-def split_text_into_words(text):
+def lemmatize_string(string):
+    '''
+    Lemmatize all words in a string using the spaCy lemmatizer.
+
+    Parameter
+    ----------
+    text:  str 
+        Text to lemmatize.
+
+    Returns
+    ----------
+    List with each word replaced by its lemma.
+    '''
+    lem_string = spacy_lemmatizer(string)
+    lemmatized = ' '.join([w.lemma_ for w in lem_string])
+    return lemmatized
+
+def string_to_word_list(text):
     '''
     Splits text into a list of words.
 
@@ -123,23 +151,6 @@ def remove_stopwords(word_lst, stop_words):
     '''
     return [word for word in word_lst if word not in stop_words]
 
-def lemmatize_word_list(word_lst):
-    '''
-    Lemmatizes a list of words.
-
-    Parameter
-    ----------
-    word_lst: list
-        List of words to lemmatize.
-    
-    Returns
-    ----------
-    List of words to lemmatize.
-    '''
-    lemmatizer = WordNetLemmatizer()
-    lemmatized = ' '.join([lemmatizer.lemmatize(w) for w in word_lst])
-    return lemmatized
-
 def word_list_to_string(word_lst):
     '''
     Creates a string with all words from a list of words.
@@ -153,9 +164,9 @@ def word_list_to_string(word_lst):
     ----------
     String of the words in the word list passed in.
     '''
-    return ''.join(word_lst)
+    return ' '.join(word_lst)
 
-def text_cleaner(text):
+def text_cleaner(text, stop_words):
     '''
     A text cleaning pipeline combining the above functions to clean a string of text by lowercasing, removing numbers/puncuation/urls and new lines, lemmatizing.
 
@@ -172,11 +183,11 @@ def text_cleaner(text):
     text_np = remove_nums_and_punctuation(text_lc)
     text_nnls = remove_newlines(text_np)
     text_nurl = remove_urls(text_nnls)
-    words = split_text_into_words(text_nurl)
-    words_nsw = remove_stopwords(words)
-    lemmatized = lemmatize_word_list(words_nsw)
-    cleaned_text = word_list_to_string(lemmatized)
-    return cleaned_text
+    text_lemd = lemmatize_string(text_nurl)
+    words = string_to_word_list(text_lemd)
+    words_nsw = remove_stopwords(words, stop_words)
+    cleaned_str = word_list_to_string(words_nsw)
+    return cleaned_str
 
 
 def create_word_cloud(text, 
@@ -243,7 +254,7 @@ def common_words_graph(text, num_words=15, title='Most Common Words'):
     ax.set_title(title)
     plt.legend(edgecolor='inherit')
     plt.show()
-    plt.save('common words graph')
+    plt.savefig('common words graph')
 
 
 def lexical_diversity(text):
@@ -285,3 +296,5 @@ def get_word_context(text, word, lines=10):
     '''
     txt = nltk.Text(text.split())
     return txt.concordance(word, lines=lines)
+
+
