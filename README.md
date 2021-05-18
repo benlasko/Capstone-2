@@ -1,6 +1,9 @@
 # **Sentiment Analysis on Tweets**
 ## Capstone 2 for the Galvanize Data Science Immersive
 
+![emojis_head](/images/emojishead.png)
+
+
 <br>
 
 ## Technologies Used
