@@ -1,4 +1,4 @@
-# **Sentiment Analysis on Tweets**
+# **Sentiment Analysis on Airline Tweets**
 ## Capstone 2 for the Galvanize Data Science Immersive
 
 ![emojis_head](/images/emojishead.png)
@@ -20,7 +20,7 @@
 
 ## Introduction
 
-#### Natural language processing is a profound tool with the power to help us understand our collective history, culture, and state of mind.  One way to apply it is conducting sentiment analysis which can be used for a variety of purposes including assessing public sentiment about products, events, or ideas, predicting social unrest, informing education and policy, and helping decide how to allocate resources.  So although the dataset I used for this project was a collection of tweets about airlines my interest in doing this was to learn and practice using natural language processing and predictive modeling for sentiment analysis to be able to apply these techniques in a variety of different ways.  To do this I wrote code and built functions to perform EDA, text cleaning, text analysis, predictive modeling, cross validation, and supervised/unsupervised learning techniques.
+#### Natural language processing is a profound tool with the power to help us understand our collective history, culture, and state of mind.  NLP can be used to conduct sentiment analysis which can be used for a variety of purposes including assessing public opinions, appraisals, emotions, or attitudes towards a topic, person or entity, predicting social unrest, and preventing violence.  So although the dataset I used for this project was a collection of tweets about airlines my interest in doing this was to learn and practice using natural language processing and predictive modeling for sentiment analysis to be able to apply these techniques in a variety of ways.  To do this I wrote code and built functions to perform EDA, text cleaning, text analysis, predictive modeling, cross validation, and supervised/unsupervised learning techniques.
 
 
 ## Summary
@@ -132,4 +132,4 @@
 
 ## Future Improvements
 
-#### I'd like to revisit this project in the future to better tune the supervised learning models using gridsearch and other methods, try some sentiment analysis packages like Vader and Textblob, and continue to explore unsupervised learning techniques starting with analyzing the k-means clusters and using LDA for topic modeling.
+#### I'd like to revisit this project in the future to better tune the supervised learning models using gridsearch and other methods, try some sentiment analysis packages like Vader, and continue to explore unsupervised learning techniques starting with analyzing the k-means clusters and using LDA for topic modeling.
