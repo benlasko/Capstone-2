@@ -15,6 +15,7 @@
 * Jupyter
 * Scikit-Learn
 * Natural Language Tookit - NLTK
+* Jupyter
 * AWS
 
 
@@ -26,7 +27,7 @@
 ## Summary
 
 ####  The dataset I used was from Kaggle and it had a collection of about 14,000 tweets from February of 2015 about six major airlines.  The tweets were prelabeled by sentiment.  I conducted EDA and plotted the distribution of all sentiment counts and the distribution of sentiment counts by airline.  Then I created a word cloud to visualize the most common words in the corpus of tweets.  After that I used natural language processing techniques to analyze the tweets.  The tweets were cleaned using a text cleaning pipeline I built.  I show some examples of the original vs cleaned tweets and some information about the lexical diversity of the corpus.  I created a second word cloud to show the most common words found in the cleaned corpus.  Following that I printed out some examples of the context in which two of the most common words in the corpus were found.
-#### After cleaning the text I tested five supervised learning models to classify the tweets by sentiment.  You'll see the scores I was able to get with my models after a little tuning.  I wanted to try an unsupervised learning approach to analyze the data also so I used a TF-IDF vectorizer, PCA, and k-means clustering, to begin that process.
+#### After cleaning the text I tested five supervised learning models to classify the tweets by sentiment.  You'll see the scores I was able to get with my models after some tuning.  I wanted to try an unsupervised learning approach to analyze the data also so I used a TF-IDF vectorizer, PCA, and k-means clustering to begin that process.
 
 <br>
 
