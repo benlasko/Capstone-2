@@ -1,5 +1,4 @@
 # **Sentiment Analysis on Airline Tweets**
-## Capstone 2 for the Galvanize Data Science Immersive
 
 ![emojis_head](/images/emojishead.png)
 
